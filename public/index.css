@@ -1,0 +1,124 @@
+@font-face {
+    font-family: "Monogram";
+    src: url("./monogram.ttf");
+}
+@font-palette-values --titlePalette {
+    font-family: "Honk";
+    base-palette: 7;
+}
+body {
+    margin: 0;
+    padding: 0;
+}
+header {
+    margin: 0;
+    background-color: #222;    
+    padding: 0 2rem;
+    font-family: monospace;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 6vh;
+    min-height: 2rem;
+}
+#title-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+h1 {
+    font-size: 1.6rem;
+    margin: 0;
+    color: #EEE;
+    font-family: "Honk";
+    font-palette: --titlePalette;
+}
+.for-hackers {
+    font-family: "Monogram", monospace;
+    background-color: #5624ed;
+    padding: .2rem .4rem;
+    margin-left: 1rem;
+    color: #EEE;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+#menu-container {
+    text-align: center;
+}
+main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 94vh;
+}
+section {
+    flex-grow: 1;
+    height: 94vh;
+}
+#editor-container {
+    width: 40vw;
+}
+#editor {
+    font-family: monospace;
+    font-size: 1rem;
+}
+div#editor .cm-editor {
+    overflow: auto;
+    height: 84vh;
+}
+div#editor .cm-editor .cm-content {
+    padding: .7rem 0;
+    margin: 0 .7rem;
+}
+button#run {
+    height: 10vh;
+    background-color: #5624ed;
+    border-width: 0;
+    width: 100%;
+    cursor: pointer;
+    color: #FFF;
+    text-transform: uppercase;
+    font-size: 2.2rem;
+    font-family: 'Monogram';
+    font-family: "Honk";
+    font-palette: --titlePalette;
+    transition: background-color .2s;
+}
+button#run:hover {
+    background-color: #6d40f5;
+}
+#viewer-container {
+    display: flex;
+    width: 60vw;
+    position: relative;
+}
+#click-run {
+    position: absolute;
+    width: 100%;
+    top: 3rem;
+    text-align: center;
+    left: 0;
+    background-color: #1B1B1B;
+    color: #EEE;
+    font-size: 2rem;
+    font-family: 'Monogram';
+    font-family: "Honk";
+    font-palette: --titlePalette;
+}
+#click-run .run-wording {
+    color: #5624ed;
+    text-transform: uppercase;
+}
+#viewer {
+    height: 94vh;
+    flex-grow: 1;
+    border-width: 0;
+    background-color: #1B1B1B;
+}
+.hidden {
+    display: none !important;
+}

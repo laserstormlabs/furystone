@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "codemirror": "^6.0.1",
+    "phaser": "^3.80.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.12.0"
+  },
+  "scripts": {
+    "bundle": "node_modules/.bin/rollup src/index.js -f iife -o public/index.min.js -p @rollup/plugin-node-resolve -p @rollup/plugin-terser",
+    "bundle_viewer": "node_modules/.bin/rollup src/viewer/game/Game.js -f es -o public/viewer/viewer.min.js --output.name Game -p @rollup/plugin-node-resolve -p @rollup/plugin-terser"
+  }
+}

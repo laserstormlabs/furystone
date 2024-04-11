@@ -1,0 +1,14 @@
+body {
+    color: #FFFFFF;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+span {
+    display: block;
+    font-size: 1.3rem;
+}
+@font-face {
+    font-family: "Monogram";
+    src: url("../monogram.ttf");
+}
