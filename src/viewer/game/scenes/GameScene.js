@@ -15,6 +15,19 @@ const ENEMY_PROPERTIES = {
         attack_damage: 5,
         attack_interval: 1000
     },
+    skeleton: {
+        body_size: {
+            x: 14, y: 22
+        },
+        offset: {
+            x: 3, y: 6
+        },
+        max_health: 10,
+        movement_speed: 60,
+        mass: .6,
+        attack_damage: 3,
+        attack_interval: 1000
+    },
     axol_muddy: {
         body_size: {
             x: 28, y: 26
@@ -165,6 +178,9 @@ export class GameScene extends Scene {
         this.load.spritesheet('demon_pig_run', 'game-assets/sprites/enemies/demon_pig_run.png', { frameWidth: 46, frameHeight: 68 });
         this.load.spritesheet('demon_pig_idle', 'game-assets/sprites/enemies/demon_pig_idle.png?1=1', { frameWidth: 52, frameHeight: 62 });
 
+        this.load.spritesheet('skeleton_run', 'game-assets/sprites/enemies/skeleton_run.png', { frameWidth: 20, frameHeight: 32 });
+        this.load.spritesheet('skeleton_idle', 'game-assets/sprites/enemies/skeleton_idle.png', { frameWidth: 20, frameHeight: 28 });
+        
         this.load.spritesheet('target_idle', 'game-assets/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('target_aura', 'game-assets/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('target_chest', 'game-assets/sprites/chest_empty.png', { frameWidth: 48, frameHeight: 32 });
@@ -346,6 +362,25 @@ export class GameScene extends Scene {
         this.anims.create({
             key: 'axol_muddy_death',
             frames: this.anims.generateFrameNumbers('axol_muddy_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'skeleton_run',
+            frames: this.anims.generateFrameNumbers('skeleton_run', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'skeleton_idle',
+            frames: this.anims.generateFrameNumbers('skeleton_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'skeleton_death',
+            frames: this.anims.generateFrameNumbers('skeleton_idle', { frames: [0, 1, 2, 3] }),
             frameRate: 5,
             repeat: -1
         });

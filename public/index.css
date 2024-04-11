@@ -28,6 +28,9 @@ header {
     justify-content: flex-start;
     align-items: center;
 }
+#title-container img {
+    margin-right: .7rem;
+}
 h1 {
     font-size: 1.6rem;
     margin: 0;
