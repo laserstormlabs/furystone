@@ -23,7 +23,7 @@ const ENEMY_PROPERTIES = {
             x: 3, y: 6
         },
         max_health: 10,
-        movement_speed: 60,
+        movement_speed: 70,
         mass: .6,
         attack_damage: 3,
         attack_interval: 1000
@@ -184,7 +184,7 @@ export class GameScene extends Scene {
         this.load.spritesheet('target_idle', 'game-assets/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('target_aura', 'game-assets/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('target_chest', 'game-assets/sprites/chest_empty.png', { frameWidth: 48, frameHeight: 32 });
-        
+        this.load.spritesheet('target_destruction', 'game-assets/sprites/effects/target_destruction.png', { frameWidth: 256, frameHeight: 256 });
     }
 
     create() {
@@ -397,6 +397,12 @@ export class GameScene extends Scene {
             frameRate: 19,
             repeat: -1
         });
+        this.anims.create({
+            key: 'target_destruction',
+            frames: this.anims.generateFrameNumbers('target_destruction', { start: 0, end: 18 }),
+            frameRate: 19,
+            repeat: 0
+        });
 
         this.graphics = this.add.graphics({ lineStyle: { width: 2, color: 0x00ff00 }, fillStyle: { color: 0xff0000 }});
 
@@ -497,7 +503,7 @@ export class GameScene extends Scene {
                 this.level_data.target_location.x, 
                 this.level_data.target_location.y, 
                 'target_idle', 
-                1
+                0
             ).setPushable(false);
             this.target.name = "target";
             this.target.anims.play("target_idle");
@@ -641,13 +647,9 @@ export class GameScene extends Scene {
         this.player.game_data.attack_time_remaining = attack_length;
         this.player.game_data.is_attacking = true;
 
-        this.player.game_data.current_magic = Math.max(
-            this.player.game_data.current_magic - attack_properties.cost,
-            0
-        );
+        this.player.decrease_magic(attack_properties.cost);
 
-        let new_magic_percentage = this.player.game_data.current_magic/this.player.game_data.max_magic;
-        this.events.emit('update_player_magic', new_magic_percentage);
+        this.events.emit('update_player_magic', this.player.get_magic_percentage());
     }
 
     update(time, delta) {
@@ -950,14 +952,19 @@ export class GameScene extends Scene {
 
         this.target_is_hit = true;
 
-        let death_effect = this.physics.add.sprite(
-            target.x,
+        let destruction_effect = this.physics.add.sprite(
+            target.x + 10,
             target.y,
-            'enemy_death_effect', 
-            1
-        ).setImmovable();
+            'target_destruction', 
+            0
+        );
 
-        death_effect.anims.play('enemy_death_effect', true);
+        destruction_effect.anims.play('target_destruction', true);
+
+        destruction_effect.on('animationcomplete', () => {
+            destruction_effect.destroy();
+        });
+
         target.destroy();
         this.target_aura.destroy();
 
@@ -981,7 +988,7 @@ export class GameScene extends Scene {
 
         death_effect.on('animationcomplete', () => {
             death_effect.destroy();
-        });     
+        });
 
     }
 
@@ -991,12 +998,9 @@ export class GameScene extends Scene {
             return;
         }
 
-        player.game_data.current_magic = Math.min(
-            player.game_data.current_magic + potion.game_data.value,
-            player.game_data.max_magic
-        );
-        let new_magic_percentage = this.player.game_data.current_magic/this.player.game_data.max_magic;
-        this.events.emit("update_player_magic", new_magic_percentage);
+        player.increase_magic(potion.game_data.value);
+
+        this.events.emit("update_player_magic", player.get_magic_percentage());
         potion.destroy();
 
         this.player_gain_magic_sprite.setVisible(true);
