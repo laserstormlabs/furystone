@@ -1,5 +1,6 @@
-import { Scene } from 'phaser';
+import { Scene } from './Scene';
 import { Player } from '../sprites/Player';
+import { Enemy } from '../sprites/Enemy';
 
 const ENEMY_PROPERTIES = {
     chomper_small: {
@@ -28,6 +29,19 @@ const ENEMY_PROPERTIES = {
         attack_damage: 3,
         attack_interval: 1000
     },
+    warlock: {
+        body_size: {
+            x: 14, y: 22
+        },
+        offset: {
+            x: 3, y: 6
+        },
+        max_health: 80,
+        movement_speed: 35,
+        mass: .8,
+        attack_damage: 10,
+        attack_interval: 1000
+    },
     axol_muddy: {
         body_size: {
             x: 28, y: 26
@@ -50,8 +64,21 @@ const ENEMY_PROPERTIES = {
         },
         max_health: 50,
         movement_speed: 20,
-        mass: 1.5,
+        mass: 1.8,
         attack_damage: 15,
+        attack_interval: 1000
+    },
+    ogre: {
+        body_size: {
+            x: 36, y: 46
+        },
+        offset: {
+            x: 2, y: 14
+        },
+        max_health: 70,
+        movement_speed: 35,
+        mass: 1.5,
+        attack_damage: 20,
         attack_interval: 1000
     },
     zombie_tiny: {
@@ -141,12 +168,12 @@ export class GameScene extends Scene {
 
     init() {
         this.level_data = this.game.registry.get("level_data");
-        this.utilities = this.game.registry.get("utilities");
+        this.user_defined_callbacks = this.game.registry.get("callbacks");
     }
 
     preload() {
         this.load.image('tiles', 'game-assets/dungeon-tileset-light.png?1=3');
-        this.load.tilemapCSV('map', 'game-assets/narrower-map.csv?1=5');
+        this.load.tilemapCSV('map', 'game-assets/large-map.csv?1=2');
 
         this.load.spritesheet('player_run', 'game-assets/sprites/player/run.png', { frameWidth: 32, frameHeight: 38 });
         this.load.spritesheet('player_idle', 'game-assets/sprites/player/idle.png', { frameWidth: 32, frameHeight: 34 });
@@ -181,6 +208,11 @@ export class GameScene extends Scene {
         this.load.spritesheet('skeleton_run', 'game-assets/sprites/enemies/skeleton_run.png', { frameWidth: 20, frameHeight: 32 });
         this.load.spritesheet('skeleton_idle', 'game-assets/sprites/enemies/skeleton_idle.png', { frameWidth: 20, frameHeight: 28 });
         
+        this.load.spritesheet('warlock_idle', 'game-assets/sprites/enemies/warlock_idle.png?1=1', { frameWidth: 28, frameHeight: 34 });
+
+        this.load.spritesheet('ogre_run', 'game-assets/sprites/enemies/ogre_run.png', { frameWidth: 44, frameHeight: 56 });
+        this.load.spritesheet('ogre_idle', 'game-assets/sprites/enemies/ogre_idle.png', { frameWidth: 44, frameHeight: 52 });
+
         this.load.spritesheet('target_idle', 'game-assets/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('target_aura', 'game-assets/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('target_chest', 'game-assets/sprites/chest_empty.png', { frameWidth: 48, frameHeight: 32 });
@@ -386,6 +418,44 @@ export class GameScene extends Scene {
         });
 
         this.anims.create({
+            key: 'warlock_run',
+            frames: this.anims.generateFrameNumbers('warlock_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'warlock_idle',
+            frames: this.anims.generateFrameNumbers('warlock_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'warlock_death',
+            frames: this.anims.generateFrameNumbers('warlock_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'ogre_run',
+            frames: this.anims.generateFrameNumbers('ogre_run', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'ogre_idle',
+            frames: this.anims.generateFrameNumbers('ogre_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'ogre_death',
+            frames: this.anims.generateFrameNumbers('ogre_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
             key: 'target_idle',
             frames: this.anims.generateFrameNumbers('target_idle', { frames: [0, 1, 2, 3] }),
             frameRate: 5,
@@ -508,7 +578,6 @@ export class GameScene extends Scene {
             this.target.name = "target";
             this.target.anims.play("target_idle");
 
-            //this.physics.add.collider(this.player, this.target);
             this.physics.add.collider(this.player, this.target_chest);
 
         }
@@ -521,12 +590,15 @@ export class GameScene extends Scene {
 
                 const this_enemy_properties = ENEMY_PROPERTIES[enemy_data.type];
 
-                let enemy = this.enemies.create(
-                    enemy_data.position.x, 
-                    enemy_data.position.y, 
-                    enemy_data.type + '_idle',
-                    1
-                );
+                let enemy = new Enemy({
+                    scene: this,
+                    x: enemy_data.position.x, 
+                    y: enemy_data.position.y, 
+                    type: enemy_data.type
+                });
+
+                this.enemies.add(enemy);
+
                 enemy.anims.play(enemy_data.type + '_idle', true);
                 enemy.game_data = {
                     max_health: this_enemy_properties.max_health,
@@ -589,25 +661,13 @@ export class GameScene extends Scene {
             this.player_teleport_sprite.anims.play("player_teleport");
             this.player.setActive(true).setVisible(true);
 
-            this.input.keyboard.on('keydown-A', (event) => {
-                if (this.player.game_data.is_attacking
-                || this.player.game_data.current_magic === 0) {
-                    return;
+            for (let key in this.user_defined_callbacks) {
+                if (key.startsWith("keydown")) {
+                    this.input.keyboard.on(key, (event) => {
+                        this.user_defined_callbacks[key](this.game);
+                    });
                 }
-    
-                this.startPlayerAttack("light");
-    
-            });
-    
-            this.input.keyboard.on('keydown-S', (event) => {
-                if (this.player.game_data.is_attacking
-                || this.player.game_data.current_magic === 0) {
-                    return;
-                }
-    
-                this.startPlayerAttack("heavy");
-    
-            });
+            }
 
         });
     }
@@ -646,10 +706,7 @@ export class GameScene extends Scene {
         this.cameras.main.shake(attack_length, attack_properties.shake);
         this.player.game_data.attack_time_remaining = attack_length;
         this.player.game_data.is_attacking = true;
-
-        this.player.decrease_magic(attack_properties.cost);
-
-        this.events.emit('update_player_magic', this.player.get_magic_percentage());
+        //this.events.emit('update_player_magic', this.player.get_magic_percentage());
     }
 
     update(time, delta) {
@@ -844,7 +901,7 @@ export class GameScene extends Scene {
 
     setEnemyHealthBarValue(bar, health_percentage) {
 
-        this.utilities.setBarValue(
+        this.setBarValue(
             bar, 
             health_percentage, 
             ENEMY_HEALTH_BAR_WIDTH, 
@@ -890,8 +947,13 @@ export class GameScene extends Scene {
         if (this.player.game_data.current_magic > 0
         && !enemy.game_data.damaged_by_current_attack
         && enemy_can_attack_now) {
+
             enemy.game_data.last_attack_time = now;
-            this.player.game_data.current_health = Math.max(
+
+            if (typeof this.user_defined_callbacks.player_gets_attacked !== 'undefined') {
+                this.user_defined_callbacks.player_gets_attacked(this.game, enemy);
+            }
+            /*this.player.game_data.current_health = Math.max(
                 this.player.game_data.current_health - enemy.game_data.attack_damage,
                 0
             );
@@ -905,12 +967,8 @@ export class GameScene extends Scene {
             } else {
                 this.events.emit("update_player_health", 0);
                 this.loseGame("out_of_health");
-            }
+            }*/
         }
-        
-        /*if (typeof game_callbacks.enemy_contacts_player !== "undefined") {
-            game_callbacks.enemy_contacts_player(player, enemy);
-        }*/
         
     }
 

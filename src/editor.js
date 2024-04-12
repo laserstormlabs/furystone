@@ -44,7 +44,7 @@ function runUserCode() {
         const entered_code = editor.state.doc.toString();
         const script = viewer_iframe.contentWindow.document.createElement("script");
         const script_content = viewer_iframe.contentWindow.document.createTextNode(
-          "import { Game } from './viewer.min.js';\n" +
+          "import { GameBuilder } from './gamebuilder.min.js';\n" +
           entered_code
         );
 

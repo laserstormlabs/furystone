@@ -1,7 +1,4 @@
-import { Scene } from 'phaser';
-
-const GAME_WIDTH = window.innerWidth;
-const GAME_HEIGHT = window.innerHeight;
+import { Scene } from './Scene';
 
 const DIALOG = {
     intro: [
@@ -25,12 +22,6 @@ const DIALOG = {
         try_again: "You must rest, and try again when you are ready.",
         retry_instructions: "[ Press 'Enter' to retry ]"
     }
-};
-
-const GUIDANCE_SPRITE_POSITIONS = {
-    intro: GAME_HEIGHT/2 - 250,
-    win: GAME_HEIGHT/2 - 100,
-    lose: GAME_HEIGHT/2 - 150
 };
 
 const PLAYER_HEALTH_BAR_WIDTH = 200;
@@ -70,7 +61,6 @@ export class UIScene extends Scene {
 
     init() {
         this.level_data = this.game.registry.get("level_data");
-        this.utilities = this.game.registry.get("utilities");
     }
 
     preload() {
@@ -86,7 +76,7 @@ export class UIScene extends Scene {
         background.x = 0;
         background.y = 0;
         background.fillStyle(0x000000, .75);
-        background.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        background.fillRect(0, 0, this.game.config.width, this.game.config.height);
         return background;
     }
 
@@ -98,7 +88,6 @@ export class UIScene extends Scene {
         background_bar.fillRect(0, 0, PLAYER_HEALTH_BAR_WIDTH + 4, PLAYER_HEALTH_BAR_HEIGHT + 4);
 
         let bar = this.add.graphics();
-        this.setPlayerHealthBarValue(bar, 1);
         bar.x = PLAYER_HEALTH_BAR_POSITION_X;
         bar.y = PLAYER_HEALTH_BAR_POSITION_Y;
 
@@ -126,7 +115,6 @@ export class UIScene extends Scene {
         background_bar.fillRect(0, 0, PLAYER_MAGIC_BAR_WIDTH + 4, PLAYER_MAGIC_BAR_HEIGHT + 4);
 
         let bar = this.add.graphics();
-        this.setPlayerMagicBarValue(bar, 1);
         bar.x = PLAYER_MAGIC_BAR_POSITION_X;
         bar.y = PLAYER_MAGIC_BAR_POSITION_Y;
 
@@ -145,10 +133,10 @@ export class UIScene extends Scene {
         return bar;
     }
 
-    setPlayerMagicBarValue(bar, magic_percentage) {
+    setPlayerMagicBarValue(magic_percentage) {
 
-        this.utilities.setBarValue(
-            bar, 
+        this.setBarValue(
+            this.magic_bar, 
             magic_percentage, 
             PLAYER_MAGIC_BAR_WIDTH, 
             PLAYER_MAGIC_BAR_HEIGHT, 
@@ -158,10 +146,10 @@ export class UIScene extends Scene {
 
     }
 
-    setPlayerHealthBarValue(bar, health_percentage) {
+    setPlayerHealthBarValue(health_percentage) {
 
-        this.utilities.setBarValue(
-            bar, 
+        this.setBarValue(
+            this.health_bar, 
             health_percentage, 
             PLAYER_HEALTH_BAR_WIDTH, 
             PLAYER_HEALTH_BAR_HEIGHT, 
@@ -174,6 +162,12 @@ export class UIScene extends Scene {
     create() {
 
         const gameScene = this.scene.get('GameScene');
+
+        const GUIDANCE_SPRITE_POSITIONS = {
+            intro: this.game.config.height/2 - 250,
+            win: this.game.config.height/2 - 100,
+            lose: this.game.config.height/2 - 150
+        };
 
         this.anims.create({
             key: 'guide_idle',
@@ -195,11 +189,14 @@ export class UIScene extends Scene {
         });
 
         this.health_bar = this.createPlayerHealthBar();
+        this.setPlayerHealthBarValue(1);
+
         this.magic_bar = this.createPlayerMagicBar();
+        this.setPlayerMagicBarValue(1);
 
         if (this.level_data.time_allowed !== null) {
             this.seconds_remaining_text = this.add.text(
-                GAME_WIDTH - 40, -3,
+                this.game.config.width - 40, -3,
                 this.level_data.time_allowed,
                 { 
                     fontSize: '32px',
@@ -212,20 +209,20 @@ export class UIScene extends Scene {
 
         this.guidance_text_background = this.createMessageBackground();
         this.guidance_text = this.add.text(
-            GAME_WIDTH/2, 
-            GAME_HEIGHT/2,
+            this.game.config.width/2, 
+            this.game.config.height/2,
             DIALOG.intro.join("\n\n") + "\n\n" + DIALOG.instructions.join("\n"),
             {
                 fontSize: '24px',
                 fontFamily: 'Monogram',
                 fill: '#FFF',
                 align: 'left',
-                wordWrap: { width: GAME_WIDTH - 30, useAdvancedWrap: true }
+                wordWrap: { width: this.game.config.width - 30, useAdvancedWrap: true }
             }
         ).setOrigin(0.5);
 
         this.guidance_sprite = this.physics.add.sprite(
-            GAME_WIDTH/2, 
+            this.game.config.width/2, 
             GUIDANCE_SPRITE_POSITIONS.intro, 
             'guide_idle', 
             0
@@ -233,34 +230,34 @@ export class UIScene extends Scene {
         this.guidance_sprite.anims.play('guide_idle');
 
         this.target_chest_sprite = this.physics.add.sprite(
-            GAME_WIDTH/2, 
-            GAME_HEIGHT - 100, 
+            this.game.config.width/2, 
+            this.game.config.height - 100, 
             'target_chest_guidance', 
             0
         );
 
         this.target_aura_sprite = this.physics.add.sprite(
-            GAME_WIDTH/2, 
-            GAME_HEIGHT - 125,
+            this.game.config.width/2, 
+            this.game.config.height - 125,
             'target_aura', 
             0
         );
         this.target_aura_sprite.anims.play("target_aura_guidance");
 
         this.target_sprite = this.physics.add.sprite(
-            GAME_WIDTH/2, 
-            GAME_HEIGHT - 120,
+            this.game.config.width/2, 
+            this.game.config.height - 120,
             'target_idle_guidance', 
             1
         );
         this.target_sprite.anims.play("target_idle_guidance");
 
         gameScene.events.on("update_player_health", (new_value) => {
-            this.setPlayerHealthBarValue(this.health_bar, new_value);
+            this.setPlayerHealthBarValue(new_value);
         });
 
         gameScene.events.on("update_player_magic", (new_value) => {
-            this.setPlayerMagicBarValue(this.magic_bar, new_value);
+            this.setPlayerMagicBarValue(new_value);
         });
 
         gameScene.events.on("update_seconds_remaining", (new_value) => {
@@ -277,10 +274,18 @@ export class UIScene extends Scene {
         });
 
         gameScene.events.on("lose_game", (reason) => {
+            let reason_message;
+
+            if (typeof DIALOG.lose.reasons[reason] !== "undefined") {
+                reason_message = DIALOG.lose.reasons[reason];
+            } else {
+                reason_message = "You lost for some reason??";
+            }
+
             this.guidance_sprite.setY(GUIDANCE_SPRITE_POSITIONS.lose);
             this.showGuidance();
             this.guidance_text.setText(
-                DIALOG.lose.reasons[reason] + "\n\n" + 
+                reason_message + "\n\n" + 
                 DIALOG.lose.try_again + "\n\n" +
                 DIALOG.lose.retry_instructions
             );
