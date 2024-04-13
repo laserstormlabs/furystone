@@ -20,6 +20,14 @@ builder.add_enemy("chomper_small", 300, 540)
 builder.add_enemy("zombie_large", 350, 520)
 builder.add_enemy("zombie_large", 500, 818)
 
+builder.add_enemy("chomper_tiny", 608, 768)
+builder.add_enemy("chomper_tiny", 658, 768)
+builder.add_enemy("chomper_tiny", 558, 768)
+
+builder.add_enemy("chomper_tiny", 608, 818)
+builder.add_enemy("chomper_tiny", 658, 818)
+builder.add_enemy("chomper_tiny", 558, 818)
+
 /* Set the location of the target (Fury Stone) */
 
 var target_x = 628

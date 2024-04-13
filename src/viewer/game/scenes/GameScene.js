@@ -115,9 +115,22 @@ const ENEMY_PROPERTIES = {
             x: 2, y: 2
         },
         max_health: 10,
-        movement_speed: 80,
+        movement_speed: 85,
         mass: .5,
         attack_damage: 5,
+        attack_interval: 1000
+    },
+    chomper_tiny: {
+        body_size: {
+            x: 18, y: 18
+        },
+        offset: {
+            x: 2, y: 2
+        },
+        max_health: 15,
+        movement_speed: 75,
+        mass: .7,
+        attack_damage: 6,
         attack_interval: 1000
     },
     chomper_large: {
@@ -224,6 +237,9 @@ export class GameScene extends Scene {
         
         this.load.spritesheet('zombie_tiny_run', 'game-assets/sprites/enemies/zombie_tiny_run.png', { frameWidth: 22, frameHeight: 24 });
         this.load.spritesheet('zombie_tiny_idle', 'game-assets/sprites/enemies/zombie_tiny_idle.png', { frameWidth: 18, frameHeight: 20 });
+        
+        this.load.spritesheet('chomper_tiny_run', 'game-assets/sprites/enemies/chomper_tiny_run.png?1=1', { frameWidth: 22, frameHeight: 28 });
+        this.load.spritesheet('chomper_tiny_idle', 'game-assets/sprites/enemies/chomper_tiny_idle.png?1=1', { frameWidth: 20, frameHeight: 24 });
 
         this.load.spritesheet('swampy_run', 'game-assets/sprites/enemies/swampy.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('swampy_idle', 'game-assets/sprites/enemies/swampy.png', { frameWidth: 32, frameHeight: 32 });
@@ -234,7 +250,7 @@ export class GameScene extends Scene {
         this.load.spritesheet('skeleton_run', 'game-assets/sprites/enemies/skeleton_run.png', { frameWidth: 20, frameHeight: 32 });
         this.load.spritesheet('skeleton_idle', 'game-assets/sprites/enemies/skeleton_idle.png', { frameWidth: 20, frameHeight: 28 });
         
-        this.load.spritesheet('warlock_idle', 'game-assets/sprites/enemies/warlock.png?1=1', { frameWidth: 28, frameHeight: 34 });
+        this.load.spritesheet('warlock', 'game-assets/sprites/enemies/warlock.png?1=1', { frameWidth: 28, frameHeight: 34 });
 
         this.load.spritesheet('ogre_run', 'game-assets/sprites/enemies/ogre_run.png', { frameWidth: 44, frameHeight: 56 });
         this.load.spritesheet('ogre_idle', 'game-assets/sprites/enemies/ogre_idle.png', { frameWidth: 44, frameHeight: 52 });
@@ -388,6 +404,25 @@ export class GameScene extends Scene {
         this.anims.create({
             key: 'zombie_tiny_death',
             frames: this.anims.generateFrameNumbers('zombie_tiny_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'chomper_tiny_run',
+            frames: this.anims.generateFrameNumbers('chomper_tiny_run', { frames: [0, 1, 2, 3] }),
+            frameRate: 15,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'chomper_tiny_idle',
+            frames: this.anims.generateFrameNumbers('chomper_tiny_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 15,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'chomper_tiny_death',
+            frames: this.anims.generateFrameNumbers('chomper_tiny_idle', { frames: [0, 1, 2, 3] }),
             frameRate: 5,
             repeat: -1
         });
@@ -670,6 +705,11 @@ export class GameScene extends Scene {
                 this.enemies.add(enemy);
 
                 enemy.anims.play(enemy_data.type + '_idle', true);
+
+                if (Math.random() > 0.5) {
+                    enemy.flipX = true;
+                }
+
                 enemy.game_data = {
                     max_health: this_enemy_properties.max_health,
                     current_health: this_enemy_properties.max_health,

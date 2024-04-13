@@ -99,6 +99,9 @@ button#run:hover {
     width: 60vw;
     position: relative;
 }
+#viewer-container:not(.focused) {
+    opacity: .5;
+}
 #click-run {
     position: absolute;
     width: 100%;

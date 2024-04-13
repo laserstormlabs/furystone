@@ -19,6 +19,7 @@ let editor = new EditorView({
   dark: true
 });
 
+const viewer_container = document.getElementById("viewer-container");
 const viewer_iframe = document.getElementById("viewer");
 
 let reload_listener_set = false;
@@ -29,17 +30,17 @@ function saveEditorContent() {
 
 function runUserCode() {
 
-  if (!reload_listener_set) {
+  window.addEventListener("message", (event) => {
 
-    window.addEventListener("message", (event) => {
+    if (event.origin !== location.origin) {
+      return;
+    }
 
-      if (event.origin !== location.origin) {
-        return;
-      }
+    const message = JSON.parse(event.data);
 
-      const message = JSON.parse(event.data);
+    if (message.type === "load" && message.loaded) {
 
-      if (message.loaded) {
+      if (!reload_listener_set) {
 
         const entered_code = editor.state.doc.toString();
         const script = viewer_iframe.contentWindow.document.createElement("script");
@@ -54,13 +55,21 @@ function runUserCode() {
         viewer_iframe.contentWindow.document.body.appendChild(script);
         viewer_iframe.contentWindow.focus();
 
+        reload_listener_set = true;
+
       }
 
-    });
+    } else if (message.type === "focus") {
 
-    reload_listener_set = true;
+      if (message.focused) {
+        viewer_container.classList.add("focused");
+      } else {
+        viewer_container.classList.remove("focused");
+      }
 
-  }
+    }
+
+  });
 
   viewer_iframe.contentWindow.location.reload();
 
@@ -90,7 +99,7 @@ if (saved_editor_content !== null && saved_editor_content !== "") {
 
 } else {
 
-  document.getElementById("click-run").classList.remove("hidden");
+  //document.getElementById("click-run").classList.remove("hidden");
 
 }
 
