@@ -11,9 +11,11 @@ builder.add_enemy("warlock", 400, 150)
 builder.add_enemy("skeleton", 450, 120)
 builder.add_enemy("zombie_large", 650, 310)
 builder.add_enemy("chomper_small", 750, 350)
-builder.add_enemy("axol_muddy", 550, 390)
+builder.add_enemy("swampy", 550, 390)
 builder.add_enemy("skeleton", 550, 450)
+builder.add_enemy("lizard_man", 250, 690)
 builder.add_enemy("ogre", 850, 250)
+builder.add_enemy("masked_orc", 900, 250)
 builder.add_enemy("chomper_small", 300, 540)
 builder.add_enemy("zombie_large", 350, 520)
 builder.add_enemy("zombie_large", 500, 818)
@@ -27,8 +29,8 @@ builder.set_target_location(target_x, target_y)
 
 /* Put two enemies on either side of the target */
 
-builder.add_enemy("demon_pig", target_x - 100, target_y)
-builder.add_enemy("demon_pig", target_x + 100, target_y)
+builder.add_enemy("chomper_large", target_x - 100, target_y)
+builder.add_enemy("chomper_large", target_x + 100, target_y)
 
 /* Set the time limit (in seconds) */
 

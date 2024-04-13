@@ -16,6 +16,32 @@ const ENEMY_PROPERTIES = {
         attack_damage: 5,
         attack_interval: 1000
     },
+    masked_orc: {
+        body_size: {
+            x: 22, y: 22
+        },
+        offset: {
+            x: 1, y: 6
+        },
+        max_health: 20,
+        movement_speed: 55,
+        mass: 1.2,
+        attack_damage: 2,
+        attack_interval: 1000
+    },
+    lizard_man: {
+        body_size: {
+            x: 26, y: 32
+        },
+        offset: {
+            x: 1, y: 8
+        },
+        max_health: 90,
+        movement_speed: 55,
+        mass: 0.3,
+        attack_damage: 7,
+        attack_interval: 1000
+    },
     skeleton: {
         body_size: {
             x: 14, y: 22
@@ -42,7 +68,7 @@ const ENEMY_PROPERTIES = {
         attack_damage: 10,
         attack_interval: 1000
     },
-    axol_muddy: {
+    swampy: {
         body_size: {
             x: 28, y: 26
         },
@@ -94,7 +120,7 @@ const ENEMY_PROPERTIES = {
         attack_damage: 5,
         attack_interval: 1000
     },
-    demon_pig: {
+    chomper_large: {
         body_size: {
             x: 36, y: 46
         },
@@ -199,19 +225,25 @@ export class GameScene extends Scene {
         this.load.spritesheet('zombie_tiny_run', 'game-assets/sprites/enemies/zombie_tiny_run.png', { frameWidth: 22, frameHeight: 24 });
         this.load.spritesheet('zombie_tiny_idle', 'game-assets/sprites/enemies/zombie_tiny_idle.png', { frameWidth: 18, frameHeight: 20 });
 
-        this.load.spritesheet('axol_muddy_run', 'game-assets/sprites/enemies/axol_muddy.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('axol_muddy_idle', 'game-assets/sprites/enemies/axol_muddy.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('swampy_run', 'game-assets/sprites/enemies/swampy.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('swampy_idle', 'game-assets/sprites/enemies/swampy.png', { frameWidth: 32, frameHeight: 32 });
         
-        this.load.spritesheet('demon_pig_run', 'game-assets/sprites/enemies/demon_pig_run.png', { frameWidth: 46, frameHeight: 68 });
-        this.load.spritesheet('demon_pig_idle', 'game-assets/sprites/enemies/demon_pig_idle.png?1=1', { frameWidth: 52, frameHeight: 62 });
+        this.load.spritesheet('chomper_large_run', 'game-assets/sprites/enemies/chomper_large_run.png', { frameWidth: 46, frameHeight: 68 });
+        this.load.spritesheet('chomper_large_idle', 'game-assets/sprites/enemies/chomper_large_idle.png?1=1', { frameWidth: 52, frameHeight: 62 });
 
         this.load.spritesheet('skeleton_run', 'game-assets/sprites/enemies/skeleton_run.png', { frameWidth: 20, frameHeight: 32 });
         this.load.spritesheet('skeleton_idle', 'game-assets/sprites/enemies/skeleton_idle.png', { frameWidth: 20, frameHeight: 28 });
         
-        this.load.spritesheet('warlock_idle', 'game-assets/sprites/enemies/warlock_idle.png?1=1', { frameWidth: 28, frameHeight: 34 });
+        this.load.spritesheet('warlock_idle', 'game-assets/sprites/enemies/warlock.png?1=1', { frameWidth: 28, frameHeight: 34 });
 
         this.load.spritesheet('ogre_run', 'game-assets/sprites/enemies/ogre_run.png', { frameWidth: 44, frameHeight: 56 });
         this.load.spritesheet('ogre_idle', 'game-assets/sprites/enemies/ogre_idle.png', { frameWidth: 44, frameHeight: 52 });
+
+        this.load.spritesheet('masked_orc_run', 'game-assets/sprites/enemies/masked_orc_run.png?1=1', { frameWidth: 26, frameHeight: 36 });
+        this.load.spritesheet('masked_orc_idle', 'game-assets/sprites/enemies/masked_orc_idle.png?1=1', { frameWidth: 24, frameHeight: 32 });
+
+        this.load.spritesheet('lizard_man_run', 'game-assets/sprites/enemies/lizard_man_run.png?1=1', { frameWidth: 30, frameHeight: 42 });
+        this.load.spritesheet('lizard_man_idle', 'game-assets/sprites/enemies/lizard_man_idle.png?1=1', { frameWidth: 32, frameHeight: 38 });
 
         this.load.spritesheet('target_idle', 'game-assets/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('target_aura', 'game-assets/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
@@ -361,39 +393,39 @@ export class GameScene extends Scene {
         });
 
         this.anims.create({
-            key: 'demon_pig_run',
-            frames: this.anims.generateFrameNumbers('demon_pig_run', { frames: [0, 1, 2, 3] }),
+            key: 'chomper_large_run',
+            frames: this.anims.generateFrameNumbers('chomper_large_run', { frames: [0, 1, 2, 3] }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
-            key: 'demon_pig_idle',
-            frames: this.anims.generateFrameNumbers('demon_pig_idle', { frames: [0, 1, 2, 3] }),
+            key: 'chomper_large_idle',
+            frames: this.anims.generateFrameNumbers('chomper_large_idle', { frames: [0, 1, 2, 3] }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
-            key: 'demon_pig_death',
-            frames: this.anims.generateFrameNumbers('demon_pig_idle', { frames: [0, 1, 2, 3] }),
+            key: 'chomper_large_death',
+            frames: this.anims.generateFrameNumbers('chomper_large_idle', { frames: [0, 1, 2, 3] }),
             frameRate: 5,
             repeat: -1
         });
 
         this.anims.create({
-            key: 'axol_muddy_run',
-            frames: this.anims.generateFrameNumbers('axol_muddy_run', { frames: [0, 1, 2, 3] }),
+            key: 'swampy_run',
+            frames: this.anims.generateFrameNumbers('swampy_run', { frames: [0, 1, 2, 3] }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
-            key: 'axol_muddy_idle',
-            frames: this.anims.generateFrameNumbers('axol_muddy_idle', { frames: [0, 1, 2, 3] }),
+            key: 'swampy_idle',
+            frames: this.anims.generateFrameNumbers('swampy_idle', { frames: [0, 1, 2, 3] }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
-            key: 'axol_muddy_death',
-            frames: this.anims.generateFrameNumbers('axol_muddy_idle', { frames: [0, 1, 2, 3] }),
+            key: 'swampy_death',
+            frames: this.anims.generateFrameNumbers('swampy_idle', { frames: [0, 1, 2, 3] }),
             frameRate: 5,
             repeat: -1
         });
@@ -419,19 +451,19 @@ export class GameScene extends Scene {
 
         this.anims.create({
             key: 'warlock_run',
-            frames: this.anims.generateFrameNumbers('warlock_idle', { frames: [0, 1, 2, 3] }),
+            frames: this.anims.generateFrameNumbers('warlock', { frames: [0, 1, 2, 3] }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: 'warlock_idle',
-            frames: this.anims.generateFrameNumbers('warlock_idle', { frames: [0, 1, 2, 3] }),
+            frames: this.anims.generateFrameNumbers('warlock', { frames: [0, 1, 2, 3] }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: 'warlock_death',
-            frames: this.anims.generateFrameNumbers('warlock_idle', { frames: [0, 1, 2, 3] }),
+            frames: this.anims.generateFrameNumbers('warlock', { frames: [0, 1, 2, 3] }),
             frameRate: 5,
             repeat: -1
         });
@@ -451,6 +483,44 @@ export class GameScene extends Scene {
         this.anims.create({
             key: 'ogre_death',
             frames: this.anims.generateFrameNumbers('ogre_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'masked_orc_run',
+            frames: this.anims.generateFrameNumbers('masked_orc_run', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'masked_orc_idle',
+            frames: this.anims.generateFrameNumbers('masked_orc_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'masked_orc_death',
+            frames: this.anims.generateFrameNumbers('masked_orc_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'lizard_man_run',
+            frames: this.anims.generateFrameNumbers('lizard_man_run', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'lizard_man_idle',
+            frames: this.anims.generateFrameNumbers('lizard_man_idle', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'lizard_man_death',
+            frames: this.anims.generateFrameNumbers('lizard_man_idle', { frames: [0, 1, 2, 3] }),
             frameRate: 5,
             repeat: -1
         });
