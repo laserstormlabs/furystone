@@ -4,12 +4,16 @@ import { GameScene } from './game/scenes/GameScene';
 import { UIScene } from './game/scenes/UIScene';
 import { Game } from './game/Game';
 
+// Leave 2 pixels for border on either side, to indicate window has focus
+const GAME_WIDTH = window.innerWidth - 2;
+const GAME_HEIGHT = window.innerHeight - 2;
+
 const GAME_CONFIG = {
     type: PHASER_TYPE_AUTO,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: GAME_WIDTH,
+    height: GAME_HEIGHT,
     backgroundColor: '#1B1B1B',
-    parent: 'phaser-example',
+    parent: 'game-container',
     pixelArt: true,
     physics: {
         default: 'arcade',

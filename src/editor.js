@@ -59,14 +59,6 @@ function runUserCode() {
 
       }
 
-    } else if (message.type === "focus") {
-
-      if (message.focused) {
-        viewer_container.classList.add("focused");
-      } else {
-        viewer_container.classList.remove("focused");
-      }
-
     }
 
   });
