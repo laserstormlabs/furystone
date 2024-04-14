@@ -71,7 +71,10 @@ export class PlayerAttack extends Physics.Arcade.Sprite {
         return ATTACK_PROPERTIES[this.name];
     }
 
-    push_back(enemy) {
+    push_back(enemy, strength) {
+
+        enemy.game_data.damaged_by_current_attack = true;
+
         let player = this.scene.player;
         let enemy_x_distance = enemy.body.x - player.body.x;
         let enemy_y_distance = enemy.body.y - player.body.y;
@@ -80,8 +83,8 @@ export class PlayerAttack extends Physics.Arcade.Sprite {
             Math.abs(enemy_x_distance) + Math.abs(enemy_y_distance);
 
         enemy.body.setVelocity(
-            (enemy_x_distance/distance_absolute_sum) * this.pushback/enemy.game_data.mass, 
-            (enemy_y_distance/distance_absolute_sum) * this.pushback/enemy.game_data.mass
+            (enemy_x_distance/distance_absolute_sum) * strength/enemy.game_data.mass, 
+            (enemy_y_distance/distance_absolute_sum) * strength/enemy.game_data.mass
         );
     }
 

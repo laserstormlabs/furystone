@@ -23,6 +23,10 @@ export class Enemy extends Physics.Arcade.Sprite {
         return this.game_data.attack_damage;
     }
 
+    set is_stunned(value) {
+        this.game_data.damaged_by_current_attack = value;
+    }
+
     increase_health(increment) {
         this.game_data.current_health = Math.min(
             this.game_data.current_health + increment,
@@ -42,6 +46,15 @@ export class Enemy extends Physics.Arcade.Sprite {
             this.game_data.health_bar,
             new_value/this.game_data.max_health
         );
+    }
+
+    die() {
+        this.game_data.is_dying = true;
+        this.anims.play(this.name + '_death', true);
+        this.body.setVelocity(0);
+        setTimeout(() => {
+            this.scene.enemyDies(this);
+        }, 1000);
     }
 
 }

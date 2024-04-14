@@ -84,11 +84,27 @@ builder.handle_event("player_gets_attacked", player_gets_attacked)
 /* Event handler for enemy getting attacked */
 
 function enemy_gets_attacked(game, enemy, attack) {
+    enemy.is_stunned = true
     enemy.decrease_health(attack.damage);
     enemy.update_health_bar(enemy.health);
-    attack.push_back(enemy);
+    attack.push_back(enemy, attack.pushback);
 }
+
 builder.handle_event("enemy_gets_attacked", enemy_gets_attacked);
+
+function player_attack_ends(game) {
+    var player = game.player
+    if (!game.stone_destroyed && player.magic === 0) {
+        game.lose("out_of_magic")
+    }
+    for (var enemy of game.enemies) {
+        enemy.is_stunned = false
+        if (enemy.health === 0) {
+            enemy.die()
+        }
+    }
+}
+builder.handle_event("player_attack_ends", player_attack_ends);
 
 /* Start the game */
 

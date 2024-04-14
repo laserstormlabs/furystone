@@ -833,15 +833,9 @@ export class GameScene extends Scene {
                 this.player.game_data.attack_time_remaining = 0;
                 this.player.game_data.is_attacking = false;
                 this.player_attack.destroy();
-                this.enemies.children.each((enemy) => {
-                    enemy.game_data.damaged_by_current_attack = false;
-                });
 
-                if (!this.target_is_hit && this.player.game_data.current_magic === 0) {
-                    let remaining_potion_count = this.potions.countActive();
-                    if (remaining_potion_count === 0) {
-                        this.loseGame("out_of_magic");
-                    }
+                if (typeof this.user_defined_callbacks.player_attack_ends !== 'undefined') {
+                    this.user_defined_callbacks.player_attack_ends(this.game);
                 }
 
             }
@@ -894,19 +888,8 @@ export class GameScene extends Scene {
             if (enemy.body.touching.none && !enemy.body.embedded) {
                 enemy.game_data.is_touching_player = false;
             }
-
-            if (enemy.game_data.current_health === 0) {
-
-                if (!enemy.game_data.is_dying) {
-                    enemy.game_data.is_dying = true;
-                    enemy.anims.play(enemy.name + '_death', true);
-                    enemy.body.setVelocity(0);
-                    setTimeout(() => {
-                        this.enemyDies(enemy);
-                    }, 1000);
-                }
                 
-            } else if (!enemy.game_data.is_touching_player) {
+            if (enemy.game_data.current_health > 0 && !enemy.game_data.is_touching_player) {
 
                 let distance_from_player_x = this.player.body.x - enemy.body.x;
                 let distance_from_player_y = this.player.body.y - enemy.body.y;
@@ -1085,8 +1068,6 @@ export class GameScene extends Scene {
         if (enemy.game_data.damaged_by_current_attack || this.game_is_over) {
             return;
         }
-
-        enemy.game_data.damaged_by_current_attack = true;
 
         if (typeof this.user_defined_callbacks.enemy_gets_attacked !== 'undefined') {
             this.user_defined_callbacks.enemy_gets_attacked(this.game, enemy, attack);
