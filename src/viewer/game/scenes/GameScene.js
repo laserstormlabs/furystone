@@ -1,6 +1,7 @@
 import { Scene } from './Scene';
 import { Player } from '../sprites/Player';
 import { Enemy } from '../sprites/Enemy';
+import { PlayerAttack } from '../sprites/PlayerAttack';
 
 const ENEMY_PROPERTIES = {
     chomper_small: {
@@ -14,6 +15,19 @@ const ENEMY_PROPERTIES = {
         movement_speed: 50,
         mass: 1,
         attack_damage: 5,
+        attack_interval: 1000
+    },
+    zombie_ice: {
+        body_size: {
+            x: 18, y: 28
+        },
+        offset: {
+            x: 4, y: 4
+        },
+        max_health: 20,
+        movement_speed: 35,
+        mass: 1,
+        attack_damage: 0,
         attack_interval: 1000
     },
     masked_orc: {
@@ -148,29 +162,6 @@ const ENEMY_PROPERTIES = {
     }
 };
 
-const PLAYER_ATTACK_PROPERTIES = {
-    light: {
-        damage: 5,
-        pushback: 250,
-        range: 128,
-        cost: 10,
-        shake: .002,
-        offset: {
-            x: 0, y: 10
-        }
-    },
-    heavy: {
-        damage: 15,
-        pushback: 600,
-        range: 192,
-        cost: 20,
-        shake: .004,
-        offset: {
-            x: 0, y: 0
-        }
-    }
-};
-
 const POTION_PROPERTIES = {
     small: { value: 5 },
     large: { value: 15 }
@@ -251,6 +242,7 @@ export class GameScene extends Scene {
         this.load.spritesheet('skeleton_idle', 'game-assets/sprites/enemies/skeleton_idle.png', { frameWidth: 20, frameHeight: 28 });
         
         this.load.spritesheet('warlock', 'game-assets/sprites/enemies/warlock.png?1=1', { frameWidth: 28, frameHeight: 34 });
+        this.load.spritesheet('zombie_ice', 'game-assets/sprites/enemies/zombie_ice.png', { frameWidth: 24, frameHeight: 32 });
 
         this.load.spritesheet('ogre_run', 'game-assets/sprites/enemies/ogre_run.png', { frameWidth: 44, frameHeight: 56 });
         this.load.spritesheet('ogre_idle', 'game-assets/sprites/enemies/ogre_idle.png', { frameWidth: 44, frameHeight: 52 });
@@ -504,6 +496,25 @@ export class GameScene extends Scene {
         });
 
         this.anims.create({
+            key: 'zombie_ice_run',
+            frames: this.anims.generateFrameNumbers('zombie_ice', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'zombie_ice_idle',
+            frames: this.anims.generateFrameNumbers('zombie_ice', { frames: [0, 1, 2, 3] }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'zombie_ice_death',
+            frames: this.anims.generateFrameNumbers('zombie_ice', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
             key: 'ogre_run',
             frames: this.anims.generateFrameNumbers('ogre_run', { frames: [0, 1, 2, 3] }),
             frameRate: 10,
@@ -720,6 +731,7 @@ export class GameScene extends Scene {
                     movement_speed: this_enemy_properties.movement_speed,
                     attack_interval: this_enemy_properties.attack_interval,
                     attack_damage: this_enemy_properties.attack_damage,
+                    mass: this_enemy_properties.mass,
                     is_dying: false
                 }
                 enemy.name = enemy_data.type;
@@ -784,36 +796,22 @@ export class GameScene extends Scene {
 
     startPlayerAttack(type) {
 
-        const attack_properties = PLAYER_ATTACK_PROPERTIES[type];
+        this.player_attack = new PlayerAttack({
+            scene: this,
+            type: type
+        });
 
-        this.attack_sprite = this.physics.add.sprite(
-            this.player.body.x + 16 + attack_properties.offset.x, 
-            this.player.body.y + attack_properties.offset.y, 
-            'player_attack_' + type, 
-            1
-        ).setImmovable();
+        this.player_attack.anims.play('player_attack_' + type, true);
 
-        this.attack_sprite.name = type;
-        this.attack_sprite.anims.play('player_attack_' + type, true);
-        this.attack_sprite.setBodySize(
-            attack_properties.range, 
-            attack_properties.range, 
-            true
-        );
-
-        if (this.player.game_data.last_horizontal_direction === "left") {
-            this.attack_sprite.flipX = true;
-        }
-
-        this.physics.add.overlap(this.attack_sprite, this.enemies, this.enemyGetsAttacked, null, this);
+        this.physics.add.overlap(this.player_attack, this.enemies, this.enemyGetsAttacked, null, this);
         
         if (this.target !== null) {
-            this.physics.add.overlap(this.attack_sprite, this.target, this.targetGetsAttacked, null, this);
+            this.physics.add.overlap(this.player_attack, this.target, this.targetGetsAttacked, null, this);
         }
 
         let attack_length = 500;
         this.player.anims.play('player_attack', true);
-        this.cameras.main.shake(attack_length, attack_properties.shake);
+        this.cameras.main.shake(attack_length, this.player_attack.properties.shake);
         this.player.game_data.attack_time_remaining = attack_length;
         this.player.game_data.is_attacking = true;
         //this.events.emit('update_player_magic', this.player.get_magic_percentage());
@@ -834,7 +832,7 @@ export class GameScene extends Scene {
             if (this.player.game_data.attack_time_remaining <= 0) {
                 this.player.game_data.attack_time_remaining = 0;
                 this.player.game_data.is_attacking = false;
-                this.attack_sprite.destroy();
+                this.player_attack.destroy();
                 this.enemies.children.each((enemy) => {
                     enemy.game_data.damaged_by_current_attack = false;
                 });
@@ -1088,31 +1086,11 @@ export class GameScene extends Scene {
             return;
         }
 
-        const this_enemy_properties = ENEMY_PROPERTIES[enemy.name];
-
-        let damage = PLAYER_ATTACK_PROPERTIES[attack.name].damage;
-        let pushback = PLAYER_ATTACK_PROPERTIES[attack.name].pushback;
-
         enemy.game_data.damaged_by_current_attack = true;
-        enemy.game_data.current_health = Math.max(
-            enemy.game_data.current_health - damage, 0
-        );
 
-        this.setEnemyHealthBarValue(
-            enemy.game_data.health_bar,
-            enemy.game_data.current_health/enemy.game_data.max_health
-        );
-
-        let enemy_x_distance = enemy.body.x - this.player.body.x;
-        let enemy_y_distance = enemy.body.y - this.player.body.y;
-
-        let distance_absolute_sum = 
-            Math.abs(enemy_x_distance) + Math.abs(enemy_y_distance);
-
-        enemy.body.setVelocity(
-            (enemy_x_distance/distance_absolute_sum) * pushback/this_enemy_properties.mass, 
-            (enemy_y_distance/distance_absolute_sum) * pushback/this_enemy_properties.mass
-        );
+        if (typeof this.user_defined_callbacks.enemy_gets_attacked !== 'undefined') {
+            this.user_defined_callbacks.enemy_gets_attacked(this.game, enemy, attack);
+        }
 
     }
 

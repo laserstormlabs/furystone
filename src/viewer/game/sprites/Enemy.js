@@ -19,6 +19,10 @@ export class Enemy extends Physics.Arcade.Sprite {
         return this.game_data.current_health;
     }
 
+    get attack_damage() {
+        return this.game_data.attack_damage;
+    }
+
     increase_health(increment) {
         this.game_data.current_health = Math.min(
             this.game_data.current_health + increment,
@@ -30,6 +34,13 @@ export class Enemy extends Physics.Arcade.Sprite {
         this.game_data.current_health = Math.max(
             this.game_data.current_health - decrement,
             0
+        );
+    }
+
+    update_health_bar(new_value) {
+        this.scene.setEnemyHealthBarValue(
+            this.game_data.health_bar,
+            new_value/this.game_data.max_health
         );
     }
 

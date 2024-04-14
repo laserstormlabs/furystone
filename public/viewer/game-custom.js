@@ -16,6 +16,7 @@ builder.add_enemy("skeleton", 550, 450)
 builder.add_enemy("lizard_man", 250, 690)
 builder.add_enemy("ogre", 850, 250)
 builder.add_enemy("masked_orc", 900, 250)
+builder.add_enemy("zombie_ice", 950, 270)
 builder.add_enemy("chomper_small", 300, 540)
 builder.add_enemy("zombie_large", 350, 520)
 builder.add_enemy("zombie_large", 500, 818)
@@ -72,13 +73,22 @@ builder.handle_event("keydown-S", heavy_attack)
 
 function player_gets_attacked(game, enemy) {
     var player = game.player
-    player.decrease_health(enemy.game_data.attack_damage)
+    player.decrease_health(enemy.attack_damage)
     game.update_health_bar(player.health)
     if (player.health === 0) {
         game.lose("out_of_health")
     }
 }
 builder.handle_event("player_gets_attacked", player_gets_attacked)
+
+/* Event handler for enemy getting attacked */
+
+function enemy_gets_attacked(game, enemy, attack) {
+    enemy.decrease_health(attack.damage);
+    enemy.update_health_bar(enemy.health);
+    attack.push_back(enemy);
+}
+builder.handle_event("enemy_gets_attacked", enemy_gets_attacked);
 
 /* Start the game */
 
