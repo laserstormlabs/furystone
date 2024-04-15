@@ -7,8 +7,7 @@ var builder = new GameBuilder()
 /* Add enemies to the level */
 
 builder.add_enemy("zombie_tiny", 530, 150)
-builder.add_enemy("warlock", 400, 150)
-builder.add_enemy("skeleton", 450, 120)
+builder.add_enemy("warlock", 380, 170)
 builder.add_enemy("zombie_large", 650, 310)
 builder.add_enemy("chomper_small", 750, 350)
 builder.add_enemy("swampy", 550, 390)
@@ -28,6 +27,14 @@ builder.add_enemy("chomper_tiny", 558, 768)
 builder.add_enemy("chomper_tiny", 608, 818)
 builder.add_enemy("chomper_tiny", 658, 818)
 builder.add_enemy("chomper_tiny", 558, 818)
+
+/* Add multiple enemies with loop */
+
+var enemy_x = 400
+while (enemy_x < 500) {
+    builder.add_enemy("skeleton", enemy_x, 120)
+    enemy_x += 20
+}
 
 /* Set the location of the target (Fury Stone) */
 
