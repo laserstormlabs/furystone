@@ -180,7 +180,7 @@ export class GameScene extends Scene {
     enemies;
     potions;
     seconds_remaining;
-    timer_event = null;
+    timer_events = [];
     target = null;
     target_aura = null;
     target_chest = null;
@@ -766,27 +766,31 @@ export class GameScene extends Scene {
                 return;
             }
             this.game_has_started = true;
-            
-            if (this.level_data.time_allowed !== null) {
 
-                this.seconds_remaining = this.level_data.time_allowed;
-    
-                this.timer_event = this.time.addEvent({
-                    delay: 1000,
-                    callback: this.updateTimer,
-                    callbackScope: this,
-                    loop: true
-                });
+            if (typeof this.user_defined_callbacks.event.game_start !== 'undefined') {
+                this.user_defined_callbacks.event.game_start(this.game);
+            }
+
+            for (let ms in this.user_defined_callbacks.interval) {
+                for (let callback of this.user_defined_callbacks.interval[ms]) {
+                    let timer_event = this.time.addEvent({
+                        delay: ms,
+                        callback: () => { callback(this.game) },
+                        callbackScope: this,
+                        loop: true
+                    });
+                    this.timer_events.push(timer_event)
+                }
             }
 
             this.player_teleport_sprite.setVisible(true);
             this.player_teleport_sprite.anims.play("player_teleport");
             this.player.setActive(true).setVisible(true);
 
-            for (let key in this.user_defined_callbacks) {
+            for (let key in this.user_defined_callbacks.event) {
                 if (key.startsWith("keydown")) {
                     this.input.keyboard.on(key, (event) => {
-                        this.user_defined_callbacks[key](this.game);
+                        this.user_defined_callbacks.event[key](this.game);
                     });
                 }
             }
@@ -834,8 +838,8 @@ export class GameScene extends Scene {
                 this.player.game_data.is_attacking = false;
                 this.player_attack.destroy();
 
-                if (typeof this.user_defined_callbacks.player_attack_ends !== 'undefined') {
-                    this.user_defined_callbacks.player_attack_ends(this.game);
+                if (typeof this.user_defined_callbacks.event.player_attack_ends !== 'undefined') {
+                    this.user_defined_callbacks.event.player_attack_ends(this.game);
                 }
 
             }
@@ -926,18 +930,11 @@ export class GameScene extends Scene {
         });
     }
 
-    updateTimer() {
-        this.seconds_remaining -= 1;
-        this.events.emit("update_seconds_remaining", this.seconds_remaining);
-        if (this.seconds_remaining == 0) {
-            this.events.emit("update_player_health", 0);
-            this.loseGame("out_of_time");
-        }   
-    }
-
     endGame() {
-        if (this.timer_event !== null) {
-            this.timer_event.remove(); 
+        if (this.timer_events !== null) {
+            for (let timer_event of this.timer_events) {
+                timer_event.remove(); 
+            }
         }
         this.game_is_over = true;
     }
@@ -1041,24 +1038,9 @@ export class GameScene extends Scene {
 
             enemy.game_data.last_attack_time = now;
 
-            if (typeof this.user_defined_callbacks.player_gets_attacked !== 'undefined') {
-                this.user_defined_callbacks.player_gets_attacked(this.game, enemy);
+            if (typeof this.user_defined_callbacks.event.player_gets_attacked !== 'undefined') {
+                this.user_defined_callbacks.event.player_gets_attacked(this.game, enemy);
             }
-            /*this.player.game_data.current_health = Math.max(
-                this.player.game_data.current_health - enemy.game_data.attack_damage,
-                0
-            );
-
-            this.player_lose_health_sprite.setVisible(true);
-            this.player_lose_health_sprite.anims.play("player_lose_health");
-
-            if (this.player.game_data.current_health > 0) {
-                let new_health_percentage = this.player.game_data.current_health/this.player.game_data.max_health;
-                this.events.emit("update_player_health", new_health_percentage);
-            } else {
-                this.events.emit("update_player_health", 0);
-                this.loseGame("out_of_health");
-            }*/
         }
         
     }
@@ -1069,8 +1051,8 @@ export class GameScene extends Scene {
             return;
         }
 
-        if (typeof this.user_defined_callbacks.enemy_gets_attacked !== 'undefined') {
-            this.user_defined_callbacks.enemy_gets_attacked(this.game, enemy, attack);
+        if (typeof this.user_defined_callbacks.event.enemy_gets_attacked !== 'undefined') {
+            this.user_defined_callbacks.event.enemy_gets_attacked(this.game, enemy, attack);
         }
 
     }

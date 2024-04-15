@@ -44,7 +44,6 @@ export class UIScene extends Scene {
 
     health_text;
     magic_text;
-    seconds_remaining_text;
     health_bar;
     magic_bar;
     guidance_text_background;
@@ -194,7 +193,7 @@ export class UIScene extends Scene {
         this.magic_bar = this.createPlayerMagicBar();
         this.setPlayerMagicBarValue(1);
 
-        if (this.level_data.time_allowed !== null) {
+        /*if (this.level_data.time_allowed !== null) {
             this.seconds_remaining_text = this.add.text(
                 this.game.config.width - 40, -3,
                 this.level_data.time_allowed,
@@ -205,7 +204,7 @@ export class UIScene extends Scene {
                     align: 'right'
                 }
             );
-        }
+        }*/
 
         this.guidance_text_background = this.createMessageBackground();
         this.guidance_text = this.add.text(
@@ -258,13 +257,6 @@ export class UIScene extends Scene {
 
         gameScene.events.on("update_player_magic", (new_value) => {
             this.setPlayerMagicBarValue(new_value);
-        });
-
-        gameScene.events.on("update_seconds_remaining", (new_value) => {
-            this.seconds_remaining_text.setText(new_value);
-            if (new_value < 10) {
-                this.seconds_remaining_text.setColor('#DD0000')
-            }
         });
 
         gameScene.events.on("win_game", () => {

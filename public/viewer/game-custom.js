@@ -43,7 +43,33 @@ builder.add_enemy("chomper_large", target_x + 100, target_y)
 
 /* Set the time limit (in seconds) */
 
-builder.set_time_limit(60)
+function game_start(game) {
+    var timer_x = game.width - 50
+    var timer_y = 10
+    var seconds_remaining = 60
+    game.set_data("seconds_remaining", seconds_remaining)
+    game.add_text("timer", timer_x, timer_y, seconds_remaining, 32)
+}
+
+builder.handle_event("game_start", game_start);
+
+function update_timer(game) {
+    var seconds_remaining = game.get_data("seconds_remaining")
+    seconds_remaining -= 1
+    game.set_data("seconds_remaining", seconds_remaining)
+    game.update_text("timer", seconds_remaining)
+    if (seconds_remaining < 10) {
+        game.update_text_color("timer", "red")
+    }
+    if (seconds_remaining === 0) {
+        var player = game.player
+        player.decrease_health(player.health)
+        game.update_health_bar(0)
+        game.lose("out_of_time")
+    }
+}
+
+builder.set_interval(update_timer, 1000);
 
 /* Add event handler for light attack */
 
@@ -85,12 +111,12 @@ builder.handle_event("player_gets_attacked", player_gets_attacked)
 
 function enemy_gets_attacked(game, enemy, attack) {
     enemy.is_stunned = true
-    enemy.decrease_health(attack.damage);
-    enemy.update_health_bar(enemy.health);
-    attack.push_back(enemy, attack.pushback);
+    enemy.decrease_health(attack.damage)
+    enemy.update_health_bar(enemy.health)
+    attack.push_back(enemy, attack.pushback)
 }
 
-builder.handle_event("enemy_gets_attacked", enemy_gets_attacked);
+builder.handle_event("enemy_gets_attacked", enemy_gets_attacked)
 
 function player_attack_ends(game) {
     var player = game.player
@@ -98,13 +124,14 @@ function player_attack_ends(game) {
         game.lose("out_of_magic")
     }
     for (var enemy of game.enemies) {
-        enemy.is_stunned = false
         if (enemy.health === 0) {
             enemy.die()
+        } else {
+            enemy.is_stunned = false
         }
     }
 }
-builder.handle_event("player_attack_ends", player_attack_ends);
+builder.handle_event("player_attack_ends", player_attack_ends)
 
 /* Start the game */
 

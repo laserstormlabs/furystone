@@ -29,13 +29,22 @@ export class GameBuilder {
     level_data = {
         enemies: [],
         potions: [],
-        time_allowed: 300,
         target_location: null
     }
 
-    callbacks = {}
+    callbacks = {
+        event: {},
+        interval: {}
+    }
 
     game;
+
+    set_interval(callback, ms) {
+        if (typeof this.callbacks.interval[ms] === 'undefined') {
+            this.callbacks.interval[ms] = [];
+        }
+        this.callbacks.interval[ms].push(callback);
+    }
 
     add_enemy(type, x, y) {
         this.level_data.enemies.push({
@@ -60,7 +69,7 @@ export class GameBuilder {
     }
 
     handle_event(event_name, callback) {
-        this.callbacks[event_name] = callback;
+        this.callbacks.event[event_name] = callback;
     }
 
     start_game() {
