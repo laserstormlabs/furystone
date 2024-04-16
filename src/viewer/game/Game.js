@@ -36,6 +36,10 @@ export class Game extends PhaserGame {
         return this.user_supplied_data[key];
     }
 
+    has_text(key) {
+        return typeof this.text_objects[key] !== "undefined";
+    }
+
     add_text(key, x, y, content, size) {
         const uiScene = this.scene.getScene("UIScene");
         this.text_objects[key] = uiScene.add.text(x, y, content, { 
@@ -51,6 +55,11 @@ export class Game extends PhaserGame {
 
     update_text_color(key, color) {
         this.text_objects[key].setColor(color);
+    }
+
+    add_enemy(type, x, y) {
+        const gameScene = this.scene.getScene("GameScene");
+        gameScene.addEnemy(type, x, y);
     }
 
     update_magic_bar(new_value) {

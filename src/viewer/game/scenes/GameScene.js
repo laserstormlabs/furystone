@@ -3,165 +3,6 @@ import { Player } from '../sprites/Player';
 import { Enemy } from '../sprites/Enemy';
 import { PlayerAttack } from '../sprites/PlayerAttack';
 
-const ENEMY_PROPERTIES = {
-    chomper_small: {
-        body_size: {
-            x: 22, y: 26
-        },
-        offset: {
-            x: 5, y: 16
-        },
-        max_health: 10,
-        movement_speed: 50,
-        mass: 1,
-        attack_damage: 5,
-        attack_interval: 1000
-    },
-    zombie_ice: {
-        body_size: {
-            x: 18, y: 28
-        },
-        offset: {
-            x: 4, y: 4
-        },
-        max_health: 20,
-        movement_speed: 35,
-        mass: 1,
-        attack_damage: 0,
-        attack_interval: 1000
-    },
-    masked_orc: {
-        body_size: {
-            x: 22, y: 22
-        },
-        offset: {
-            x: 1, y: 6
-        },
-        max_health: 20,
-        movement_speed: 55,
-        mass: 1.2,
-        attack_damage: 2,
-        attack_interval: 1000
-    },
-    lizard_man: {
-        body_size: {
-            x: 26, y: 32
-        },
-        offset: {
-            x: 1, y: 8
-        },
-        max_health: 90,
-        movement_speed: 55,
-        mass: 0.3,
-        attack_damage: 7,
-        attack_interval: 1000
-    },
-    skeleton: {
-        body_size: {
-            x: 14, y: 22
-        },
-        offset: {
-            x: 3, y: 6
-        },
-        max_health: 10,
-        movement_speed: 70,
-        mass: .6,
-        attack_damage: 3,
-        attack_interval: 1000
-    },
-    warlock: {
-        body_size: {
-            x: 14, y: 22
-        },
-        offset: {
-            x: 3, y: 6
-        },
-        max_health: 80,
-        movement_speed: 35,
-        mass: .8,
-        attack_damage: 10,
-        attack_interval: 1000
-    },
-    swampy: {
-        body_size: {
-            x: 28, y: 26
-        },
-        offset: {
-            x: 2, y: 4
-        },
-        max_health: 5,
-        movement_speed: 5,
-        mass: 2,
-        attack_damage: 10,
-        attack_interval: 1000
-    },
-    zombie_large: {
-        body_size: {
-            x: 36, y: 46
-        },
-        offset: {
-            x: 2, y: 14
-        },
-        max_health: 50,
-        movement_speed: 20,
-        mass: 1.8,
-        attack_damage: 15,
-        attack_interval: 1000
-    },
-    ogre: {
-        body_size: {
-            x: 36, y: 46
-        },
-        offset: {
-            x: 2, y: 14
-        },
-        max_health: 70,
-        movement_speed: 35,
-        mass: 1.5,
-        attack_damage: 20,
-        attack_interval: 1000
-    },
-    zombie_tiny: {
-        body_size: {
-            x: 18, y: 18
-        },
-        offset: {
-            x: 2, y: 2
-        },
-        max_health: 10,
-        movement_speed: 85,
-        mass: .5,
-        attack_damage: 5,
-        attack_interval: 1000
-    },
-    chomper_tiny: {
-        body_size: {
-            x: 18, y: 18
-        },
-        offset: {
-            x: 2, y: 2
-        },
-        max_health: 15,
-        movement_speed: 75,
-        mass: .7,
-        attack_damage: 6,
-        attack_interval: 1000
-    },
-    chomper_large: {
-        body_size: {
-            x: 36, y: 46
-        },
-        offset: {
-            x: 2, y: 14
-        },
-        max_health: 100,
-        movement_speed: 40,
-        mass: 2,
-        attack_damage: 50,
-        attack_interval: 1000
-    }
-};
-
 const POTION_PROPERTIES = {
     small: { value: 5 },
     large: { value: 15 }
@@ -172,11 +13,17 @@ const ENEMY_HEALTH_BAR_HEIGHT = 5;
 const ENEMY_HEALTH_BAR_FILL_COLOR = 0xCC0000;
 const ENEMY_HEALTH_BAR_VOID_COLOR = 0x000000;
 
+const MAP_COLORS = {
+    original: 'purple',
+    training_ground: 'green'
+}
+
 export class GameScene extends Scene {
 
     player;
     cursors;
     map;
+    dungeon_layer;
     enemies;
     potions;
     seconds_remaining;
@@ -202,8 +49,12 @@ export class GameScene extends Scene {
     }
 
     preload() {
-        this.load.image('tiles', 'game-assets/dungeon-tileset-light.png?1=3');
-        this.load.tilemapCSV('map', 'game-assets/large-map.csv?1=2');
+
+        let map_name = this.level_data.map_name;
+        let tileset_name = MAP_COLORS[map_name];
+
+        this.load.image('tiles', 'game-assets/tilesets/' + tileset_name + '.png?1=4');
+        this.load.tilemapCSV('map', 'game-assets/maps/' + map_name + '.csv?1=3');
 
         this.load.spritesheet('player_run', 'game-assets/sprites/player/run.png', { frameWidth: 32, frameHeight: 38 });
         this.load.spritesheet('player_idle', 'game-assets/sprites/player/idle.png', { frameWidth: 32, frameHeight: 34 });
@@ -265,7 +116,7 @@ export class GameScene extends Scene {
 
         this.map = this.make.tilemap({ key: 'map', tileWidth: 32, tileHeight: 32 });
         const tileset = this.map.addTilesetImage('tiles');
-        const layer = this.map.createLayer(0, tileset, 0, 0);
+        this.dungeon_layer = this.map.createLayer(0, tileset, 0, 0);
 
         this.map.setCollision([
             7, 27, 47, 
@@ -636,23 +487,11 @@ export class GameScene extends Scene {
 
         this.player = new Player({
             scene: this, 
-            x: 50,
-            y: 100
+            x: this.level_data.starting_point.x,
+            y: this.level_data.starting_point.y
         });
-        this.player.setPushable(false);
-        this.player.game_data = {
-            max_health: 50,
-            current_health: 50,
-            max_magic: 100,
-            current_magic: 100,
-            last_horizontal_direction: 'right'
-        }
-        this.player.name = "player";
-        this.player.setBodySize(26, 28);
-        this.player.setOffset(3, 7);
-        this.player.setActive(false).setVisible(false);
 
-        this.physics.add.overlap(this.player, layer);
+        this.physics.add.overlap(this.player, this.dungeon_layer);
         this.physics.add.overlap(this.player, this.potions, this.playerCollectsPotion, null, this);
 
         this.player_gain_magic_sprite = this.physics.add.sprite(0, 0, 'player_gain_magic', 1)
@@ -704,49 +543,12 @@ export class GameScene extends Scene {
 
             for (let enemy_data of this.level_data.enemies) {
 
-                const this_enemy_properties = ENEMY_PROPERTIES[enemy_data.type];
+                this.addEnemy(enemy_data.type, enemy_data.position.x, enemy_data.position.y);
 
-                let enemy = new Enemy({
-                    scene: this,
-                    x: enemy_data.position.x, 
-                    y: enemy_data.position.y, 
-                    type: enemy_data.type
-                });
-
-                this.enemies.add(enemy);
-
-                enemy.anims.play(enemy_data.type + '_idle', true);
-
-                if (Math.random() > 0.5) {
-                    enemy.flipX = true;
-                }
-
-                enemy.game_data = {
-                    max_health: this_enemy_properties.max_health,
-                    current_health: this_enemy_properties.max_health,
-                    damaged_by_current_attack: false,
-                    last_attack_time: null,
-                    is_touching_player: false,
-                    is_within_range_of_player: false,
-                    movement_speed: this_enemy_properties.movement_speed,
-                    attack_interval: this_enemy_properties.attack_interval,
-                    attack_damage: this_enemy_properties.attack_damage,
-                    mass: this_enemy_properties.mass,
-                    is_dying: false
-                }
-                enemy.name = enemy_data.type;
-                enemy.setPushable(false);
-                enemy.setBodySize(this_enemy_properties.body_size.x, this_enemy_properties.body_size.y);
-                enemy.setOffset(this_enemy_properties.offset.x, this_enemy_properties.offset.y);
-
-                enemy.game_data.health_bar = this.createEnemyHealthBar();
-                this.positionEnemyHealthBar(enemy, enemy.game_data.health_bar);
-
-                this.physics.add.collider(enemy, layer);
             }
         }
 
-        this.physics.add.collider(this.player, layer);
+        this.physics.add.collider(this.player, this.dungeon_layer);
 
         this.physics.add.collider(this.player, this.enemies, this.enemyContactsPlayer, null, this);
 
@@ -768,7 +570,9 @@ export class GameScene extends Scene {
             this.game_has_started = true;
 
             if (typeof this.user_defined_callbacks.event.game_start !== 'undefined') {
-                this.user_defined_callbacks.event.game_start(this.game);
+                for (let callback of this.user_defined_callbacks.event.game_start) {
+                    callback(this.game);
+                }
             }
 
             for (let ms in this.user_defined_callbacks.interval) {
@@ -789,13 +593,33 @@ export class GameScene extends Scene {
 
             for (let key in this.user_defined_callbacks.event) {
                 if (key.startsWith("keydown")) {
-                    this.input.keyboard.on(key, (event) => {
-                        this.user_defined_callbacks.event[key](this.game);
-                    });
+                    for (let callback of this.user_defined_callbacks.event[key]) {
+                        this.input.keyboard.on(key, (event) => {
+                            callback(this.game);
+                        });
+                    }
                 }
             }
 
         });
+    }
+
+    addEnemy(type, x, y) {
+        let enemy = new Enemy({
+            scene: this,
+            x: x, 
+            y: y, 
+            type: type
+        });
+
+        this.enemies.add(enemy);
+
+        enemy.anims.play(type + '_idle', true);
+
+        enemy.game_data.health_bar = this.createEnemyHealthBar();
+        this.positionEnemyHealthBar(enemy, enemy.game_data.health_bar);
+
+        this.physics.add.collider(enemy, this.dungeon_layer);
     }
 
     startPlayerAttack(type) {
@@ -839,7 +663,9 @@ export class GameScene extends Scene {
                 this.player_attack.destroy();
 
                 if (typeof this.user_defined_callbacks.event.player_attack_ends !== 'undefined') {
-                    this.user_defined_callbacks.event.player_attack_ends(this.game);
+                    for (let callback of this.user_defined_callbacks.event.player_attack_ends) {
+                        callback(this.game);
+                    }
                 }
 
             }
@@ -851,27 +677,35 @@ export class GameScene extends Scene {
             let verticalCursorDown = this.cursors.up.isDown || this.cursors.down.isDown;
 
             if (horizontalCursorDown || verticalCursorDown) {
+
                 this.player.anims.play('player_run', true);
+
+                if (typeof this.user_defined_callbacks.event.player_move !== 'undefined') {
+                    for (let callback of this.user_defined_callbacks.event.player_move) {
+                        callback(this.game);
+                    }
+                }
+
             } else {
                 this.player.anims.play('player_idle', true);
             }
 
             if (this.cursors.left.isDown) {
                 this.player.flipX = true;
-                this.player.body.setVelocityX(-100);
+                this.player.body.setVelocityX(-this.player.speed);
                 this.player.game_data.last_horizontal_direction = 'left';
             }
             else if (this.cursors.right.isDown) {
                 this.player.flipX = false;
-                this.player.body.setVelocityX(100);
+                this.player.body.setVelocityX(this.player.speed);
                 this.player.game_data.last_horizontal_direction = 'right';
             }
 
             if (this.cursors.up.isDown) {
-                this.player.body.setVelocityY(-100);
+                this.player.body.setVelocityY(-this.player.speed);
             }
             else if (this.cursors.down.isDown) {
-                this.player.body.setVelocityY(100);
+                this.player.body.setVelocityY(this.player.speed);
             }
         }
         
@@ -1039,7 +873,9 @@ export class GameScene extends Scene {
             enemy.game_data.last_attack_time = now;
 
             if (typeof this.user_defined_callbacks.event.player_gets_attacked !== 'undefined') {
-                this.user_defined_callbacks.event.player_gets_attacked(this.game, enemy);
+                for (let callback of this.user_defined_callbacks.event.player_gets_attacked) {
+                    callback(this.game, enemy);
+                }
             }
         }
         
@@ -1052,7 +888,9 @@ export class GameScene extends Scene {
         }
 
         if (typeof this.user_defined_callbacks.event.enemy_gets_attacked !== 'undefined') {
-            this.user_defined_callbacks.event.enemy_gets_attacked(this.game, enemy, attack);
+            for (let callback of this.user_defined_callbacks.event.enemy_gets_attacked) {
+                callback(this.game, enemy, attack);
+            }
         }
 
     }

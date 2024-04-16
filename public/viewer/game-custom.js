@@ -4,14 +4,20 @@ import { GameBuilder } from './gamebuilder.min.js';
 
 var builder = new GameBuilder()
 
+/* Set the map to use */
+
+builder.set_map("original")
+
+builder.set_starting_point(50, 130)
+
 /* Add enemies to the level */
 
-builder.add_enemy("zombie_tiny", 530, 150)
+/*builder.add_enemy("zombie_tiny", 530, 150)
 builder.add_enemy("warlock", 380, 170)
 builder.add_enemy("zombie_large", 650, 310)
-builder.add_enemy("chomper_small", 750, 350)
+builder.add_enemy("chomper_small", 750, 350)*/
 builder.add_enemy("swampy", 550, 390)
-builder.add_enemy("skeleton", 550, 450)
+/*builder.add_enemy("skeleton", 550, 450)
 builder.add_enemy("lizard_man", 250, 690)
 builder.add_enemy("ogre", 850, 250)
 builder.add_enemy("masked_orc", 900, 250)
@@ -26,13 +32,13 @@ builder.add_enemy("chomper_tiny", 558, 768)
 
 builder.add_enemy("chomper_tiny", 608, 818)
 builder.add_enemy("chomper_tiny", 658, 818)
-builder.add_enemy("chomper_tiny", 558, 818)
+builder.add_enemy("chomper_tiny", 558, 818)*/
 
 /* Add multiple enemies with loop */
 
 var enemy_x = 400
 while (enemy_x < 500) {
-    builder.add_enemy("skeleton", enemy_x, 120)
+    //builder.add_enemy("skeleton", enemy_x, 120)
     enemy_x += 20
 }
 
@@ -47,6 +53,22 @@ builder.set_target_location(target_x, target_y)
 
 builder.add_enemy("chomper_large", target_x - 100, target_y)
 builder.add_enemy("chomper_large", target_x + 100, target_y)
+
+/* Display player coordinates on move */
+function show_player_position(game) {
+    var player_x = Math.floor(game.player.x)
+    var player_y = Math.floor(game.player.y)
+    var position = player_x + "," + player_y
+
+    if (!game.has_text("player_position")) {
+        var text_x = game.width - 75
+        var text_y = game.height - 50
+        game.add_text("player_position", text_x, text_y, position, 24)
+    } else {
+        game.update_text("player_position", position)
+    }
+}
+builder.handle_event("player_move", show_player_position)
 
 /* Set the time limit (in seconds) */
 
@@ -65,6 +87,7 @@ function update_timer(game) {
     seconds_remaining -= 1
     game.set_data("seconds_remaining", seconds_remaining)
     game.update_text("timer", seconds_remaining)
+    //game.add_enemy("zombie_tiny", 500, 150)
     if (seconds_remaining < 10) {
         game.update_text_color("timer", "red")
     }
@@ -108,7 +131,16 @@ function player_gets_attacked(game, enemy) {
     var player = game.player
     player.decrease_health(enemy.attack_damage)
     game.update_health_bar(player.health)
-    if (player.health === 0) {
+
+    /* Have one type of enemy slow player down temporarily */
+    if (enemy.name == "swampy") {
+        player.speed = 50
+        setTimeout(function() { 
+            player.speed = 100 
+        }, 5000)
+    }
+
+    if (player.health == 0) {
         game.lose("out_of_health")
     }
 }

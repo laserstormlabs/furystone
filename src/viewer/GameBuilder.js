@@ -29,7 +29,9 @@ export class GameBuilder {
     level_data = {
         enemies: [],
         potions: [],
-        target_location: null
+        target_location: null,
+        map_name: 'original',
+        starting_point: { x: 50, y: 100 }
     }
 
     callbacks = {
@@ -38,6 +40,14 @@ export class GameBuilder {
     }
 
     game;
+
+    set_map(name) {
+        this.level_data.map_name = name;
+    }
+
+    set_starting_point(x, y) {
+        this.level_data.starting_point = { x, y };
+    }
 
     set_interval(callback, ms) {
         if (typeof this.callbacks.interval[ms] === 'undefined') {
@@ -69,7 +79,10 @@ export class GameBuilder {
     }
 
     handle_event(event_name, callback) {
-        this.callbacks.event[event_name] = callback;
+        if (typeof this.callbacks.event[event_name] === 'undefined') {
+            this.callbacks.event[event_name] = [];
+        }
+        this.callbacks.event[event_name].push(callback);
     }
 
     start_game() {

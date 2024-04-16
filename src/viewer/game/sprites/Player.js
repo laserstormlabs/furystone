@@ -13,6 +13,20 @@ export class Player extends Physics.Arcade.Sprite {
         );
         config.scene.add.existing(this);
         config.scene.physics.add.existing(this);
+
+        this.setPushable(false);
+        this.game_data = {
+            max_health: 50,
+            current_health: 50,
+            max_magic: 100,
+            current_magic: 100,
+            last_horizontal_direction: 'right',
+            movement_speed: 100
+        }
+        this.name = "player";
+        this.setBodySize(26, 28);
+        this.setOffset(3, 7);
+        this.setActive(false).setVisible(false);
     }
 
     get magic() {
@@ -25,6 +39,14 @@ export class Player extends Physics.Arcade.Sprite {
 
     get attacking() {
         return this.game_data.is_attacking;
+    }
+
+    get speed() {
+        return this.game_data.movement_speed;
+    }
+
+    set speed(value) {
+        this.game_data.movement_speed = value;
     }
 
     increase_health(increment) {
