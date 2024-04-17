@@ -49,7 +49,7 @@ const ENEMY_PROPERTIES = {
         },
         max_health: 90,
         movement_speed: 55,
-        mass: 0.3,
+        mass: 1.2,
         attack_damage: 7,
         attack_interval: 1000
     },
@@ -76,7 +76,7 @@ const ENEMY_PROPERTIES = {
         max_health: 80,
         movement_speed: 35,
         mass: .8,
-        attack_damage: 10,
+        attack_damage: 0,
         attack_interval: 1000
     },
     swampy: {
@@ -210,6 +210,14 @@ export class Enemy extends Physics.Arcade.Sprite {
 
     set is_stunned(value) {
         this.game_data.damaged_by_current_attack = value;
+    }
+
+    get velocity() {
+        return this.body.velocity;
+    }
+
+    set_velocity(x, y) {
+        this.body.setVelocity(x, y);
     }
 
     increase_health(increment) {

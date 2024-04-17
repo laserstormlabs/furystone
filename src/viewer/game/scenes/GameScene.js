@@ -31,7 +31,8 @@ export class GameScene extends Scene {
     target = null;
     target_aura = null;
     target_chest = null;
-    target_is_hit = false;
+    target_is_destroyed = false;
+    target_hit_by_current_attack = false;
     player_gain_magic_sprite;
     player_lose_health_sprite;
     player_teleport_sprite;
@@ -620,6 +621,8 @@ export class GameScene extends Scene {
         this.positionEnemyHealthBar(enemy, enemy.game_data.health_bar);
 
         this.physics.add.collider(enemy, this.dungeon_layer);
+
+        return enemy;
     }
 
     startPlayerAttack(type) {
@@ -661,7 +664,7 @@ export class GameScene extends Scene {
                 this.player.game_data.attack_time_remaining = 0;
                 this.player.game_data.is_attacking = false;
                 this.player_attack.destroy();
-
+                this.target_hit_by_current_attack = false;
                 if (typeof this.user_defined_callbacks.event.player_attack_ends !== 'undefined') {
                     for (let callback of this.user_defined_callbacks.event.player_attack_ends) {
                         callback(this.game);
@@ -773,7 +776,7 @@ export class GameScene extends Scene {
         this.game_is_over = true;
     }
 
-    winGame() {
+    winGame(message_lines) {
 
         this.endGame();
 
@@ -788,12 +791,12 @@ export class GameScene extends Scene {
         this.player.body.setVelocity(0);
 
         setTimeout(() => {
-            this.events.emit("win_game");
+            this.events.emit("win_game", message_lines);
         }, 1000);
 
     }
 
-    loseGame(reason) {
+    loseGame(message_lines) {
 
         this.endGame();
 
@@ -810,7 +813,7 @@ export class GameScene extends Scene {
         this.player.setVisible(false);
 
         setTimeout(() => {
-            this.events.emit("lose_game", reason);
+            this.events.emit("lose_game", message_lines);
         }, 1000);
 
     }
@@ -895,13 +898,12 @@ export class GameScene extends Scene {
 
     }
 
-    targetGetsAttacked(attack, target) {
-
-        this.target_is_hit = true;
+    destroyTarget() {
+        this.target_is_destroyed = true;
 
         let destruction_effect = this.physics.add.sprite(
-            target.x + 10,
-            target.y,
+            this.target.x + 10,
+            this.target.y,
             'target_destruction', 
             0
         );
@@ -912,11 +914,20 @@ export class GameScene extends Scene {
             destruction_effect.destroy();
         });
 
-        target.destroy();
+        this.target.destroy();
         this.target_aura.destroy();
+    }
 
-        this.winGame();
-
+    targetGetsAttacked(attack, target) {
+        if (this.target_hit_by_current_attack) {
+            return;
+        }
+        this.target_hit_by_current_attack = true;
+        if (typeof this.user_defined_callbacks.event.player_hits_stone !== 'undefined') {
+            for (let callback of this.user_defined_callbacks.event.player_hits_stone) {
+                callback(this.game);
+            }
+        }
     }
 
     enemyDies(enemy) {

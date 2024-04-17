@@ -31,7 +31,9 @@ export class GameBuilder {
         potions: [],
         target_location: null,
         map_name: 'original',
-        starting_point: { x: 50, y: 100 }
+        starting_point: { x: 50, y: 100 },
+        show_intro: false,
+        intro_content: []
     }
 
     callbacks = {
@@ -43,6 +45,14 @@ export class GameBuilder {
 
     set_map(name) {
         this.level_data.map_name = name;
+    }
+
+    show_intro(value) {
+        this.level_data.show_intro = value;
+    }
+
+    set_intro_content(lines) {
+        this.level_data.intro_content = lines;
     }
 
     set_starting_point(x, y) {

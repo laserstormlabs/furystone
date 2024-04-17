@@ -4,7 +4,7 @@ const ATTACK_PROPERTIES = {
     light: {
         damage: 5,
         pushback: 250,
-        range: 128,
+        range: 64,
         cost: 10,
         shake: .002,
         offset: {
@@ -14,7 +14,7 @@ const ATTACK_PROPERTIES = {
     heavy: {
         damage: 15,
         pushback: 600,
-        range: 192,
+        range: 128,
         cost: 20,
         shake: .004,
         offset: {

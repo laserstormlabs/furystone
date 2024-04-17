@@ -12,12 +12,17 @@ export class Game extends PhaserGame {
 
     get stone_destroyed() {
         const gameScene = this.scene.getScene("GameScene");
-        return gameScene.target_is_hit;
+        return gameScene.target_is_destroyed;
     }
 
     get enemies() {
         const gameScene = this.scene.getScene("GameScene");
         return gameScene.enemies.children.entries;
+    }
+
+    get potions() {
+        const gameScene = this.scene.getScene("GameScene");
+        return gameScene.potions.children.entries;
     }
 
     get width() {
@@ -59,7 +64,7 @@ export class Game extends PhaserGame {
 
     add_enemy(type, x, y) {
         const gameScene = this.scene.getScene("GameScene");
-        gameScene.addEnemy(type, x, y);
+        return gameScene.addEnemy(type, x, y);
     }
 
     update_magic_bar(new_value) {
@@ -72,14 +77,19 @@ export class Game extends PhaserGame {
         uiScene.setPlayerHealthBarValue(new_value/this.player.game_data.max_health);
     }
 
-    win() {
+    destroy_stone() {
         const gameScene = this.scene.getScene("GameScene");
-        gameScene.winGame();
+        gameScene.destroyTarget();
     }
 
-    lose(reason) {
+    win(message_lines) {
         const gameScene = this.scene.getScene("GameScene");
-        gameScene.loseGame(reason);
+        gameScene.winGame(message_lines);
+    }
+
+    lose(message_lines) {
+        const gameScene = this.scene.getScene("GameScene");
+        gameScene.loseGame(message_lines);
     }
 
 }

@@ -1,29 +1,5 @@
 import { Scene } from './Scene';
 
-const DIALOG = {
-    intro: [
-        "Within this dungeon is a Fury Stone: an ancient, cursed relic that gives life to monsters. You must destroy it.",
-        "The monsters will descend upon you when they sense your presence. Fend them off with your attacks, but do not let your Magic run too low, or you will be helpless.",
-        "Potions will restore your Magic, so collect any you can find.",
-        "Find the Fury Stone, and use your Magic to shatter it!"
-    ],
-    instructions: [
-        "[ Move with arrow keys ]",
-        "[ Press 'A' for light attack, 'S' for heavy attack ]",
-        "[ Press 'Enter' to begin ]"
-    ],
-    win: "You have done well.",
-    lose: {
-        reasons: {
-            out_of_magic: "Your magic is spent, and there are no potions left in the dungeon.",
-            out_of_health: "The monsters have bested you.",
-            out_of_time: "You can no longer withstand the Fury Stone's poisonous aura."
-        },
-        try_again: "You must rest, and try again when you are ready.",
-        retry_instructions: "[ Press 'Enter' to retry ]"
-    }
-};
-
 const PLAYER_HEALTH_BAR_WIDTH = 200;
 const PLAYER_HEALTH_BAR_HEIGHT = 18;
 const PLAYER_HEALTH_BAR_FILL_COLOR = 0xCC0000;
@@ -163,7 +139,7 @@ export class UIScene extends Scene {
         const gameScene = this.scene.get('GameScene');
 
         const GUIDANCE_SPRITE_POSITIONS = {
-            intro: this.game.config.height/2 - 250,
+            intro: 50,
             win: this.game.config.height/2 - 100,
             lose: this.game.config.height/2 - 150
         };
@@ -193,24 +169,11 @@ export class UIScene extends Scene {
         this.magic_bar = this.createPlayerMagicBar();
         this.setPlayerMagicBarValue(1);
 
-        /*if (this.level_data.time_allowed !== null) {
-            this.seconds_remaining_text = this.add.text(
-                this.game.config.width - 40, -3,
-                this.level_data.time_allowed,
-                { 
-                    fontSize: '32px',
-                    fontFamily: 'Monogram',
-                    fill: '#FFF',
-                    align: 'right'
-                }
-            );
-        }*/
-
         this.guidance_text_background = this.createMessageBackground();
         this.guidance_text = this.add.text(
             this.game.config.width/2, 
             this.game.config.height/2,
-            DIALOG.intro.join("\n\n") + "\n\n" + DIALOG.instructions.join("\n"),
+            this.level_data.intro_content.join("\n\n"),
             {
                 fontSize: '24px',
                 fontFamily: 'Monogram',
@@ -230,14 +193,14 @@ export class UIScene extends Scene {
 
         this.target_chest_sprite = this.physics.add.sprite(
             this.game.config.width/2, 
-            this.game.config.height - 100, 
+            this.game.config.height - 50, 
             'target_chest_guidance', 
             0
         );
 
         this.target_aura_sprite = this.physics.add.sprite(
             this.game.config.width/2, 
-            this.game.config.height - 125,
+            this.game.config.height - 75,
             'target_aura', 
             0
         );
@@ -245,7 +208,7 @@ export class UIScene extends Scene {
 
         this.target_sprite = this.physics.add.sprite(
             this.game.config.width/2, 
-            this.game.config.height - 120,
+            this.game.config.height - 70,
             'target_idle_guidance', 
             1
         );
@@ -259,39 +222,32 @@ export class UIScene extends Scene {
             this.setPlayerMagicBarValue(new_value);
         });
 
-        gameScene.events.on("win_game", () => {
+        gameScene.events.on("win_game", (message_lines) => {
             this.guidance_sprite.setY(GUIDANCE_SPRITE_POSITIONS.win);
             this.showGuidance();
-            this.guidance_text.setText(DIALOG.win);
+            this.guidance_text.setText(message_lines.join("\n\n"));
         });
 
-        gameScene.events.on("lose_game", (reason) => {
-            let reason_message;
-
-            if (typeof DIALOG.lose.reasons[reason] !== "undefined") {
-                reason_message = DIALOG.lose.reasons[reason];
-            } else {
-                reason_message = "You lost for some reason??";
-            }
-
+        gameScene.events.on("lose_game", (message_lines) => {
             this.guidance_sprite.setY(GUIDANCE_SPRITE_POSITIONS.lose);
             this.showGuidance();
             this.guidance_text.setText(
-                reason_message + "\n\n" + 
-                DIALOG.lose.try_again + "\n\n" +
-                DIALOG.lose.retry_instructions
+                message_lines.join("\n\n")
             );
         });
+
+        if (!this.level_data.show_intro) {
+            this.hideGuidance();
+            setTimeout(() => {
+                this.events.emit('game_start');
+            }, 250);
+        }
 
         this.input.keyboard.on('keydown-ENTER', (event) => {
             const gameScene = this.scene.get('GameScene');
 
-            if (!gameScene.game_has_started) {
-
+            if (this.level_data.show_intro && !gameScene.game_has_started) {
                 this.hideGuidance();
-                this.target_sprite.destroy();
-                this.target_aura_sprite.destroy();
-                this.target_chest_sprite.destroy();
                 this.events.emit('game_start');
 
             } else if (gameScene.game_is_over) {
@@ -310,6 +266,9 @@ export class UIScene extends Scene {
     }
 
     hideGuidance() {
+        this.target_sprite.destroy();
+        this.target_aura_sprite.destroy();
+        this.target_chest_sprite.destroy();
         this.guidance_text_background.setVisible(false);
         this.guidance_text.setVisible(false);
         this.guidance_sprite.setVisible(false);
