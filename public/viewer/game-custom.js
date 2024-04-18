@@ -17,7 +17,7 @@ builder.show_intro(true)
 builder.set_intro_content([
     "Within this dungeon is a Fury Stone: an ancient, cursed relic that gives life to monsters. You must destroy it.",
     "The monsters will descend upon you when they sense your presence. Fend them off with your attacks, but do not let your Magic run too low, or you will be helpless.",
-    "Potions will restore your Magic, so collect any you can find.",
+    "Potions will restore your Magic or help you in other ways. Collect any you can find.",
     "Find the Fury Stone, and use your Magic to shatter it!",
     "( Move with arrow keys )",
     "( Press 'A' for light attack, 'S' for heavy attack )",
@@ -28,12 +28,12 @@ builder.set_starting_point(50, 130)
 
 /* Add enemies to the level */
 
-/*builder.add_enemy("zombie_tiny", 530, 150)*/
+builder.add_enemy("zombie_tiny", 530, 150)
 builder.add_enemy("warlock", 380, 170)
-/*builder.add_enemy("zombie_large", 650, 310)
-builder.add_enemy("chomper_small", 750, 350)*/
+builder.add_enemy("zombie_large", 650, 310)
+builder.add_enemy("chomper_small", 750, 350)
 builder.add_enemy("lizard_man", 550, 390)
-/*builder.add_enemy("skeleton", 550, 450)
+builder.add_enemy("skeleton", 550, 450)
 builder.add_enemy("lizard_man", 250, 690)
 builder.add_enemy("ogre", 850, 250)
 builder.add_enemy("masked_orc", 900, 250)
@@ -48,22 +48,77 @@ builder.add_enemy("chomper_tiny", 558, 768)
 
 builder.add_enemy("chomper_tiny", 608, 818)
 builder.add_enemy("chomper_tiny", 658, 818)
-builder.add_enemy("chomper_tiny", 558, 818)*/
+builder.add_enemy("chomper_tiny", 558, 818)
 
 /* Add multiple enemies with loop */
 
 var enemy_x = 400
 while (enemy_x < 500) {
-    //builder.add_enemy("skeleton", enemy_x, 120)
+    builder.add_enemy("skeleton", enemy_x, 120)
     enemy_x += 20
 }
+
+/* Add potions to the level */
+
+builder.add_potion("blue", 531, 73)
+builder.add_potion("blue", 945, 204)
+builder.add_potion("blue", 976, 832)
+
+builder.add_potion("green", 212, 492)
+
+builder.add_potion("silver", 752, 411)
+
+/* Add event handler for collecting potion */
+
+function player_collects_potion(game, potion) {
+    if (game.is_over) {
+        return
+    }
+
+    var player = game.player
+
+    /* Have blue potion restore magic */
+    if (potion.color == "blue" && player.magic < player.max_magic) {
+        potion.destroy()
+        player.increase_magic(10)
+        game.update_magic_bar(player.magic)
+    }
+
+    /* Have green potion increase speed temporarily */
+    if (potion.color == "green") {
+        potion.destroy()
+        player.speed = player.speed * 2
+        setTimeout(function() {
+            player.speed = player.speed/2
+        }, 5000)
+    }
+
+    /* Have silver potion make player invisible temporarily */
+    if (potion.color == "silver") {
+        potion.destroy()
+        player.alpha = .5
+        
+        for (var enemy of game.enemies) {
+            enemy.can_see_player = false;
+        }
+
+        setTimeout(function() {
+            player.alpha = 1
+            for (var enemy of game.enemies) {
+                enemy.can_see_player = true;
+            }
+        }, 5000)
+    }
+}
+
+builder.handle_event("player_collects_potion", player_collects_potion);
 
 /* Set the location of the target (Fury Stone) */
 
 var target_x = 628
 var target_y = 1208
 
-builder.set_target_location(200, 200)
+builder.set_target_location(target_x, target_y)
 
 /* Put two enemies on either side of the target */
 
@@ -107,7 +162,6 @@ function update_timer(game) {
     seconds_remaining -= 1
     game.set_data("seconds_remaining", seconds_remaining)
     game.update_text("timer", seconds_remaining)
-    //game.add_enemy("zombie_tiny", 500, 150)
     if (seconds_remaining < 10) {
         game.update_text_color("timer", "red")
     }
@@ -163,9 +217,9 @@ function player_gets_attacked(game, enemy) {
 
     /* Have "swampy" enemy slow player down temporarily */
     if (enemy.name == "swampy") {
-        player.speed = 50
+        player.speed = player.speed/2
         setTimeout(function() { 
-            player.speed = 100 
+            player.speed = player.speed * 2 
         }, 5000)
     }
 

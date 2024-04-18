@@ -4,17 +4,17 @@ const ATTACK_PROPERTIES = {
     light: {
         damage: 5,
         pushback: 250,
-        range: 64,
+        range: 96,
         cost: 10,
         shake: .002,
         offset: {
-            x: 0, y: 10
+            x: -5, y: 10
         }
     },
     heavy: {
         damage: 15,
         pushback: 600,
-        range: 128,
+        range: 160,
         cost: 20,
         shake: .004,
         offset: {
@@ -46,12 +46,13 @@ export class PlayerAttack extends Physics.Arcade.Sprite {
         config.scene.physics.add.existing(this);
 
         this.name = config.type;
-
+        
         this.setBodySize(
             attack_properties.range, 
             attack_properties.range, 
             true
         );
+        this.setOrigin(0.5);
         this.setImmovable();
 
         if (player.game_data.last_horizontal_direction === "left") {

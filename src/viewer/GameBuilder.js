@@ -73,9 +73,9 @@ export class GameBuilder {
         })
     }
     
-    add_potion(size, x, y) {
+    add_potion(color, x, y) {
         this.level_data.potions.push({
-            size: size,
+            color: color,
             position: { x, y }
         })
     }

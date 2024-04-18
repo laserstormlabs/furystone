@@ -190,7 +190,8 @@ export class Enemy extends Physics.Arcade.Sprite {
             attack_interval: this_enemy_properties.attack_interval,
             attack_damage: this_enemy_properties.attack_damage,
             mass: this_enemy_properties.mass,
-            is_dying: false
+            is_dying: false,
+            can_see_player: true
         }
 
         this.name = config.type;
@@ -214,6 +215,14 @@ export class Enemy extends Physics.Arcade.Sprite {
 
     get velocity() {
         return this.body.velocity;
+    }
+
+    get can_see_player() {
+        return this.game_data.can_see_player;
+    }
+
+    set can_see_player(value) {
+        this.game_data.can_see_player = value;
     }
 
     set_velocity(x, y) {

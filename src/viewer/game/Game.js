@@ -33,6 +33,11 @@ export class Game extends PhaserGame {
         return this.config.height;
     }
 
+    get is_over() {
+        const gameScene = this.scene.getScene("GameScene");
+        return gameScene.game_is_over;
+    }
+
     set_data(key, value) {
         this.user_supplied_data[key] = value;
     }

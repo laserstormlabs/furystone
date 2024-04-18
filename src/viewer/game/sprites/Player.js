@@ -33,6 +33,10 @@ export class Player extends Physics.Arcade.Sprite {
         return this.game_data.current_magic;
     }
 
+    get max_magic() {
+        return this.game_data.max_magic;
+    }
+
     get health() {
         return this.game_data.current_health;
     }
@@ -70,6 +74,8 @@ export class Player extends Physics.Arcade.Sprite {
             this.game_data.current_magic + increment,
             this.game_data.max_magic
         );
+        this.scene.player_gain_magic_sprite.setVisible(true);
+        this.scene.player_gain_magic_sprite.anims.play("player_gain_magic");
     }
 
     decrease_magic(decrement) {

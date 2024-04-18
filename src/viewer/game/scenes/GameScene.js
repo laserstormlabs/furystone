@@ -1,12 +1,8 @@
 import { Scene } from './Scene';
 import { Player } from '../sprites/Player';
 import { Enemy } from '../sprites/Enemy';
+import { Potion } from '../sprites/Potion';
 import { PlayerAttack } from '../sprites/PlayerAttack';
-
-const POTION_PROPERTIES = {
-    small: { value: 5 },
-    large: { value: 15 }
-}
 
 const ENEMY_HEALTH_BAR_WIDTH = 50;
 const ENEMY_HEALTH_BAR_HEIGHT = 5;
@@ -61,7 +57,7 @@ export class GameScene extends Scene {
         this.load.spritesheet('player_idle', 'game-assets/sprites/player/idle.png', { frameWidth: 32, frameHeight: 34 });
         this.load.spritesheet('player_attack', 'game-assets/sprites/player/attack.png?1=1', { frameWidth: 34, frameHeight: 52 });
 
-        this.load.spritesheet('player_attack_light', 'game-assets/sprites/effects/player_attack_light.png?1=4', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('player_attack_light', 'game-assets/sprites/effects/player_attack_light.png?1=6', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('player_attack_heavy', 'game-assets/sprites/effects/player_attack_heavy.png', { frameWidth: 128, frameHeight: 128 });
         this.load.spritesheet('player_teleport', 'game-assets/sprites/effects/player_teleport.png', { frameWidth: 56, frameHeight: 56 });
         this.load.spritesheet('player_gain_magic', 'game-assets/sprites/effects/player_gain_magic.png', { frameWidth: 64, frameHeight: 64 });
@@ -69,8 +65,11 @@ export class GameScene extends Scene {
 
         this.load.spritesheet('enemy_death_effect', 'game-assets/sprites/effects/enemy_death.png?1=1', { frameWidth: 64, frameHeight: 64 });
 
-        this.load.spritesheet('potion_blue_large', 'game-assets/sprites/potions/blue_large.png?1=1', { frameWidth: 20, frameHeight: 22 });
-        this.load.spritesheet('potion_blue_small', 'game-assets/sprites/potions/blue_small.png', { frameWidth: 16, frameHeight: 22 });
+        this.load.spritesheet('potion_blue', 'game-assets/sprites/potions/blue.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_green', 'game-assets/sprites/potions/green.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_red', 'game-assets/sprites/potions/red.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_gold', 'game-assets/sprites/potions/gold.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_silver', 'game-assets/sprites/potions/silver.png', { frameWidth: 20, frameHeight: 22 });
 
         this.load.spritesheet('chomper_small_run', 'game-assets/sprites/enemies/chomper_small_run.png', { frameWidth: 32, frameHeight: 46 });
         this.load.spritesheet('chomper_small_idle', 'game-assets/sprites/enemies/chomper_small_idle.png', { frameWidth: 32, frameHeight: 46 });
@@ -183,14 +182,32 @@ export class GameScene extends Scene {
         });
 
         this.anims.create({
-            key: 'potion_blue_large',
-            frames: this.anims.generateFrameNumbers('potion_blue_large', { start: 0, end: 3 }),
+            key: 'potion_blue',
+            frames: this.anims.generateFrameNumbers('potion_blue', { start: 0, end: 3 }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
-            key: 'potion_blue_small',
-            frames: this.anims.generateFrameNumbers('potion_blue_small', { start: 0, end: 3 }),
+            key: 'potion_green',
+            frames: this.anims.generateFrameNumbers('potion_green', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'potion_red',
+            frames: this.anims.generateFrameNumbers('potion_red', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'potion_gold',
+            frames: this.anims.generateFrameNumbers('potion_gold', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'potion_silver',
+            frames: this.anims.generateFrameNumbers('potion_silver', { start: 0, end: 3 }),
             frameRate: 10,
             repeat: -1
         });
@@ -450,18 +467,18 @@ export class GameScene extends Scene {
 
             for (let potion_data of this.level_data.potions) {
 
-                let sprite_name = "potion_blue_" + potion_data.size;
+                let sprite_name = "potion_" + potion_data.color;
 
-                let potion = this.potions.create(
-                    potion_data.position.x, 
-                    potion_data.position.y, 
-                    sprite_name, 
-                    1
-                );
+                let potion = new Potion({
+                    scene: this,
+                    x: potion_data.position.x, 
+                    y: potion_data.position.y, 
+                    color: potion_data.color
+                });
+
+                this.potions.add(potion);
+
                 potion.anims.play(sprite_name, true);
-                potion.game_data = {
-                    value: POTION_PROPERTIES[potion_data.size].value
-                }
 
             }
 
@@ -739,7 +756,9 @@ export class GameScene extends Scene {
                     distance_from_player_x ** 2 + distance_from_player_y ** 2
                 );
 
-                if (absolute_distance_from_player < 300 && !this.game_is_over) {
+                if (absolute_distance_from_player < 300 
+                && !this.game_is_over
+                && enemy.game_data.can_see_player) {
 
                     if (!enemy.game_data.is_within_range_of_player) {
                         enemy.game_data.is_within_range_of_player = true;
@@ -952,7 +971,13 @@ export class GameScene extends Scene {
 
     playerCollectsPotion(player, potion) {
 
-        if (this.game_is_over || player.game_data.current_magic === player.game_data.max_magic) {
+        if (typeof this.user_defined_callbacks.event.player_collects_potion !== 'undefined') {
+            for (let callback of this.user_defined_callbacks.event.player_collects_potion) {
+                callback(this.game, potion);
+            }
+        }
+
+        /*if (this.game_is_over || player.game_data.current_magic === player.game_data.max_magic) {
             return;
         }
 
@@ -963,6 +988,6 @@ export class GameScene extends Scene {
 
         this.player_gain_magic_sprite.setVisible(true);
         this.player_gain_magic_sprite.anims.play("player_gain_magic");
-
+        */
     }
 }
