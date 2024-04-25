@@ -74,11 +74,23 @@ export class Game extends PhaserGame {
 
     update_magic_bar(new_value) {
         const uiScene = this.scene.getScene("UIScene");
+        if (new_value < 0) {
+            new_value = 0;
+        }
+        if (new_value > this.player.game_data.max_magic) {
+            new_value = this.player.game_data.max_magic;
+        }
         uiScene.setPlayerMagicBarValue(new_value/this.player.game_data.max_magic);
     }
 
     update_health_bar(new_value) {
         const uiScene = this.scene.getScene("UIScene");
+        if (new_value < 0) {
+            new_value = 0;
+        }
+        if (new_value > this.player.game_data.max_health) {
+            new_value = this.player.game_data.max_health;
+        }
         uiScene.setPlayerHealthBarValue(new_value/this.player.game_data.max_health);
     }
 

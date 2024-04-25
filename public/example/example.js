@@ -1,4 +1,4 @@
-import { GameBuilder } from './gamebuilder.min.js';
+import { GameBuilder } from '../builder/viewer/gamebuilder.min.js';
 
 /* Create the GameBuilder object and store it in a variable */
 
@@ -125,22 +125,6 @@ builder.set_target_location(target_x, target_y)
 builder.add_enemy("chomper_large", target_x - 100, target_y)
 builder.add_enemy("chomper_large", target_x + 100, target_y)
 
-/* Display player coordinates on move */
-function show_player_position(game) {
-    var player_x = Math.floor(game.player.x)
-    var player_y = Math.floor(game.player.y)
-    var position = player_x + "," + player_y
-
-    if (!game.has_text("player_position")) {
-        var text_x = game.width - 75
-        var text_y = game.height - 50
-        game.add_text("player_position", text_x, text_y, position, 24)
-    } else {
-        game.update_text("player_position", position)
-    }
-}
-builder.handle_event("player_move", show_player_position)
-
 function game_start(game) {
 
     /* Set a time limit */
@@ -182,9 +166,10 @@ builder.set_interval(update_timer, 1000);
 
 function light_attack(game) {
     var player = game.player
-    if (player.magic > 0 && !player.attacking) {
+    if (player.magic >= 10) {//0 && !player.attacking) {
         player.attack("light")
-        player.decrease_magic(10)
+        var new_magic = player.magic - 10
+        player.magic = new_magic
         game.update_magic_bar(player.magic)
     }
 }

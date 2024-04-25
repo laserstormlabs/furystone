@@ -10,6 +10,7 @@ const ENEMY_HEALTH_BAR_FILL_COLOR = 0xCC0000;
 const ENEMY_HEALTH_BAR_VOID_COLOR = 0x000000;
 
 const MAP_COLORS = {
+    empty: 'purple',
     original: 'purple',
     training_ground: 'green'
 }
@@ -50,64 +51,64 @@ export class GameScene extends Scene {
         let map_name = this.level_data.map_name;
         let tileset_name = MAP_COLORS[map_name];
 
-        this.load.image('tiles', 'game-assets/tilesets/' + tileset_name + '.png?1=4');
-        this.load.tilemapCSV('map', 'game-assets/maps/' + map_name + '.csv?1=3');
+        this.load.image('tiles', GAME_ASSET_PATH + '/tilesets/' + tileset_name + '.png?1=4');
+        this.load.tilemapCSV('map', GAME_ASSET_PATH + '/maps/' + map_name + '.csv?1=3');
 
-        this.load.spritesheet('player_run', 'game-assets/sprites/player/run.png', { frameWidth: 32, frameHeight: 38 });
-        this.load.spritesheet('player_idle', 'game-assets/sprites/player/idle.png', { frameWidth: 32, frameHeight: 34 });
-        this.load.spritesheet('player_attack', 'game-assets/sprites/player/attack.png?1=1', { frameWidth: 34, frameHeight: 52 });
+        this.load.spritesheet('player_run', GAME_ASSET_PATH + '/sprites/player/run.png', { frameWidth: 32, frameHeight: 38 });
+        this.load.spritesheet('player_idle', GAME_ASSET_PATH + '/sprites/player/idle.png', { frameWidth: 32, frameHeight: 34 });
+        this.load.spritesheet('player_attack', GAME_ASSET_PATH + '/sprites/player/attack.png?1=1', { frameWidth: 34, frameHeight: 52 });
 
-        this.load.spritesheet('player_attack_light', 'game-assets/sprites/effects/player_attack_light.png?1=6', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('player_attack_heavy', 'game-assets/sprites/effects/player_attack_heavy.png', { frameWidth: 128, frameHeight: 128 });
-        this.load.spritesheet('player_teleport', 'game-assets/sprites/effects/player_teleport.png', { frameWidth: 56, frameHeight: 56 });
-        this.load.spritesheet('player_gain_magic', 'game-assets/sprites/effects/player_gain_magic.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('player_lose_health', 'game-assets/sprites/effects/player_lose_health.png?1=1', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('player_attack_light', GAME_ASSET_PATH + '/sprites/effects/player_attack_light.png?1=6', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('player_attack_heavy', GAME_ASSET_PATH + '/sprites/effects/player_attack_heavy.png', { frameWidth: 128, frameHeight: 128 });
+        this.load.spritesheet('player_teleport', GAME_ASSET_PATH + '/sprites/effects/player_teleport.png', { frameWidth: 56, frameHeight: 56 });
+        this.load.spritesheet('player_gain_magic', GAME_ASSET_PATH + '/sprites/effects/player_gain_magic.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('player_lose_health', GAME_ASSET_PATH + '/sprites/effects/player_lose_health.png?1=1', { frameWidth: 64, frameHeight: 64 });
 
-        this.load.spritesheet('enemy_death_effect', 'game-assets/sprites/effects/enemy_death.png?1=1', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('enemy_death_effect', GAME_ASSET_PATH + '/sprites/effects/enemy_death.png?1=1', { frameWidth: 64, frameHeight: 64 });
 
-        this.load.spritesheet('potion_blue', 'game-assets/sprites/potions/blue.png', { frameWidth: 20, frameHeight: 22 });
-        this.load.spritesheet('potion_green', 'game-assets/sprites/potions/green.png', { frameWidth: 20, frameHeight: 22 });
-        this.load.spritesheet('potion_red', 'game-assets/sprites/potions/red.png', { frameWidth: 20, frameHeight: 22 });
-        this.load.spritesheet('potion_gold', 'game-assets/sprites/potions/gold.png', { frameWidth: 20, frameHeight: 22 });
-        this.load.spritesheet('potion_silver', 'game-assets/sprites/potions/silver.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_blue', GAME_ASSET_PATH + '/sprites/potions/blue.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_green', GAME_ASSET_PATH + '/sprites/potions/green.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_red', GAME_ASSET_PATH + '/sprites/potions/red.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_gold', GAME_ASSET_PATH + '/sprites/potions/gold.png', { frameWidth: 20, frameHeight: 22 });
+        this.load.spritesheet('potion_silver', GAME_ASSET_PATH + '/sprites/potions/silver.png', { frameWidth: 20, frameHeight: 22 });
 
-        this.load.spritesheet('chomper_small_run', 'game-assets/sprites/enemies/chomper_small_run.png', { frameWidth: 32, frameHeight: 46 });
-        this.load.spritesheet('chomper_small_idle', 'game-assets/sprites/enemies/chomper_small_idle.png', { frameWidth: 32, frameHeight: 46 });
+        this.load.spritesheet('chomper_small_run', GAME_ASSET_PATH + '/sprites/enemies/chomper_small_run.png', { frameWidth: 32, frameHeight: 46 });
+        this.load.spritesheet('chomper_small_idle', GAME_ASSET_PATH + '/sprites/enemies/chomper_small_idle.png', { frameWidth: 32, frameHeight: 46 });
 
-        this.load.spritesheet('zombie_large_run', 'game-assets/sprites/enemies/zombie_large_run.png', { frameWidth: 40, frameHeight: 66 });
-        this.load.spritesheet('zombie_large_idle', 'game-assets/sprites/enemies/zombie_large_idle.png', { frameWidth: 40, frameHeight: 54 });
+        this.load.spritesheet('zombie_large_run', GAME_ASSET_PATH + '/sprites/enemies/zombie_large_run.png', { frameWidth: 40, frameHeight: 66 });
+        this.load.spritesheet('zombie_large_idle', GAME_ASSET_PATH + '/sprites/enemies/zombie_large_idle.png', { frameWidth: 40, frameHeight: 54 });
         
-        this.load.spritesheet('zombie_tiny_run', 'game-assets/sprites/enemies/zombie_tiny_run.png', { frameWidth: 22, frameHeight: 24 });
-        this.load.spritesheet('zombie_tiny_idle', 'game-assets/sprites/enemies/zombie_tiny_idle.png', { frameWidth: 18, frameHeight: 20 });
+        this.load.spritesheet('zombie_tiny_run', GAME_ASSET_PATH + '/sprites/enemies/zombie_tiny_run.png', { frameWidth: 22, frameHeight: 24 });
+        this.load.spritesheet('zombie_tiny_idle', GAME_ASSET_PATH + '/sprites/enemies/zombie_tiny_idle.png', { frameWidth: 18, frameHeight: 20 });
         
-        this.load.spritesheet('chomper_tiny_run', 'game-assets/sprites/enemies/chomper_tiny_run.png?1=1', { frameWidth: 22, frameHeight: 28 });
-        this.load.spritesheet('chomper_tiny_idle', 'game-assets/sprites/enemies/chomper_tiny_idle.png?1=1', { frameWidth: 20, frameHeight: 24 });
+        this.load.spritesheet('chomper_tiny_run', GAME_ASSET_PATH + '/sprites/enemies/chomper_tiny_run.png?1=1', { frameWidth: 22, frameHeight: 28 });
+        this.load.spritesheet('chomper_tiny_idle', GAME_ASSET_PATH + '/sprites/enemies/chomper_tiny_idle.png?1=1', { frameWidth: 20, frameHeight: 24 });
 
-        this.load.spritesheet('swampy_run', 'game-assets/sprites/enemies/swampy.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('swampy_idle', 'game-assets/sprites/enemies/swampy.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('swampy_run', GAME_ASSET_PATH + '/sprites/enemies/swampy.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('swampy_idle', GAME_ASSET_PATH + '/sprites/enemies/swampy.png', { frameWidth: 32, frameHeight: 32 });
         
-        this.load.spritesheet('chomper_large_run', 'game-assets/sprites/enemies/chomper_large_run.png', { frameWidth: 46, frameHeight: 68 });
-        this.load.spritesheet('chomper_large_idle', 'game-assets/sprites/enemies/chomper_large_idle.png?1=1', { frameWidth: 52, frameHeight: 62 });
+        this.load.spritesheet('chomper_large_run', GAME_ASSET_PATH + '/sprites/enemies/chomper_large_run.png', { frameWidth: 46, frameHeight: 68 });
+        this.load.spritesheet('chomper_large_idle', GAME_ASSET_PATH + '/sprites/enemies/chomper_large_idle.png?1=1', { frameWidth: 52, frameHeight: 62 });
 
-        this.load.spritesheet('skeleton_run', 'game-assets/sprites/enemies/skeleton_run.png', { frameWidth: 20, frameHeight: 32 });
-        this.load.spritesheet('skeleton_idle', 'game-assets/sprites/enemies/skeleton_idle.png', { frameWidth: 20, frameHeight: 28 });
+        this.load.spritesheet('skeleton_run', GAME_ASSET_PATH + '/sprites/enemies/skeleton_run.png', { frameWidth: 20, frameHeight: 32 });
+        this.load.spritesheet('skeleton_idle', GAME_ASSET_PATH + '/sprites/enemies/skeleton_idle.png', { frameWidth: 20, frameHeight: 28 });
         
-        this.load.spritesheet('warlock', 'game-assets/sprites/enemies/warlock.png?1=1', { frameWidth: 28, frameHeight: 34 });
-        this.load.spritesheet('zombie_ice', 'game-assets/sprites/enemies/zombie_ice.png', { frameWidth: 24, frameHeight: 32 });
+        this.load.spritesheet('warlock', GAME_ASSET_PATH + '/sprites/enemies/warlock.png?1=1', { frameWidth: 28, frameHeight: 34 });
+        this.load.spritesheet('zombie_ice', GAME_ASSET_PATH + '/sprites/enemies/zombie_ice.png', { frameWidth: 24, frameHeight: 32 });
 
-        this.load.spritesheet('ogre_run', 'game-assets/sprites/enemies/ogre_run.png', { frameWidth: 44, frameHeight: 56 });
-        this.load.spritesheet('ogre_idle', 'game-assets/sprites/enemies/ogre_idle.png', { frameWidth: 44, frameHeight: 52 });
+        this.load.spritesheet('ogre_run', GAME_ASSET_PATH + '/sprites/enemies/ogre_run.png', { frameWidth: 44, frameHeight: 56 });
+        this.load.spritesheet('ogre_idle', GAME_ASSET_PATH + '/sprites/enemies/ogre_idle.png', { frameWidth: 44, frameHeight: 52 });
 
-        this.load.spritesheet('masked_orc_run', 'game-assets/sprites/enemies/masked_orc_run.png?1=1', { frameWidth: 26, frameHeight: 36 });
-        this.load.spritesheet('masked_orc_idle', 'game-assets/sprites/enemies/masked_orc_idle.png?1=1', { frameWidth: 24, frameHeight: 32 });
+        this.load.spritesheet('masked_orc_run', GAME_ASSET_PATH + '/sprites/enemies/masked_orc_run.png?1=1', { frameWidth: 26, frameHeight: 36 });
+        this.load.spritesheet('masked_orc_idle', GAME_ASSET_PATH + '/sprites/enemies/masked_orc_idle.png?1=1', { frameWidth: 24, frameHeight: 32 });
 
-        this.load.spritesheet('lizard_man_run', 'game-assets/sprites/enemies/lizard_man_run.png?1=1', { frameWidth: 30, frameHeight: 42 });
-        this.load.spritesheet('lizard_man_idle', 'game-assets/sprites/enemies/lizard_man_idle.png?1=1', { frameWidth: 32, frameHeight: 38 });
+        this.load.spritesheet('lizard_man_run', GAME_ASSET_PATH + '/sprites/enemies/lizard_man_run.png?1=1', { frameWidth: 30, frameHeight: 42 });
+        this.load.spritesheet('lizard_man_idle', GAME_ASSET_PATH + '/sprites/enemies/lizard_man_idle.png?1=1', { frameWidth: 32, frameHeight: 38 });
 
-        this.load.spritesheet('target_idle', 'game-assets/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('target_aura', 'game-assets/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('target_chest', 'game-assets/sprites/chest_empty.png', { frameWidth: 48, frameHeight: 32 });
-        this.load.spritesheet('target_destruction', 'game-assets/sprites/effects/target_destruction.png', { frameWidth: 256, frameHeight: 256 });
+        this.load.spritesheet('target_idle', GAME_ASSET_PATH + '/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('target_aura', GAME_ASSET_PATH + '/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('target_chest', GAME_ASSET_PATH + '/sprites/chest_empty.png', { frameWidth: 48, frameHeight: 32 });
+        this.load.spritesheet('target_destruction', GAME_ASSET_PATH + '/sprites/effects/target_destruction.png', { frameWidth: 256, frameHeight: 256 });
     }
 
     create() {
@@ -767,8 +768,8 @@ export class GameScene extends Scene {
 
                     this.physics.moveTo(
                         enemy, 
-                        this.player.body.x, 
-                        this.player.body.y, 
+                        this.player.body.x + this.player.width/2, 
+                        this.player.body.y + this.player.height/2, 
                         enemy.game_data.movement_speed
                     );
 
@@ -888,7 +889,7 @@ export class GameScene extends Scene {
             enemy_can_attack_now = true;
         }
 
-        if (this.player.game_data.current_magic > 0
+        if (!this.game_is_over
         && !enemy.game_data.damaged_by_current_attack
         && enemy_can_attack_now) {
 

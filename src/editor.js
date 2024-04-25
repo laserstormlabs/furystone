@@ -19,7 +19,6 @@ let editor = new EditorView({
   dark: true
 });
 
-const viewer_container = document.getElementById("viewer-container");
 const viewer_iframe = document.getElementById("viewer");
 
 let reload_listener_set = false;
@@ -30,17 +29,17 @@ function saveEditorContent() {
 
 function runUserCode() {
 
-  window.addEventListener("message", (event) => {
+  if (!reload_listener_set) {
 
-    if (event.origin !== location.origin) {
-      return;
-    }
+    window.addEventListener("message", (event) => {
 
-    const message = JSON.parse(event.data);
+      if (event.origin !== location.origin) {
+        return;
+      }
 
-    if (message.type === "load" && message.loaded) {
+      const message = JSON.parse(event.data);
 
-      if (!reload_listener_set) {
+      if (message.type === "load" && message.loaded) {
 
         const entered_code = editor.state.doc.toString();
         const script = viewer_iframe.contentWindow.document.createElement("script");
@@ -55,13 +54,13 @@ function runUserCode() {
         viewer_iframe.contentWindow.document.body.appendChild(script);
         viewer_iframe.contentWindow.focus();
 
-        reload_listener_set = true;
-
       }
 
-    }
+    });
 
-  });
+  }
+
+  reload_listener_set = true;
 
   viewer_iframe.contentWindow.location.reload();
 

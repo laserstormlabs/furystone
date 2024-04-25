@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Fury Stone - Game Builder</title>
+        <link rel="icon" type="image/x-icon" href="../stone-icon.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Honk&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="../index.css"></style>
+    </head>
+    <body>
+        <header id="heading">
+            <div id="title-container">
+                <img src="../stone-icon.png" width="24px" />
+                <h1>
+                    Fury Stone
+                </h1>
+                <div class="for-hackers">
+                    Game Builder
+                </div>
+            </div>
+            <div id="menu-container"></div>
+        </header>
+        <main>
+            <section id="editor-container">
+                <div id="editor"></div>
+                <button id="run">Run</button>
+            </section>
+            <section id="viewer-container">
+                <div id="click-run" class="hidden">
+                    Click <span class="run-wording">Run</span> 
+                    to run your code and play the game!
+                </div>
+                <iframe id="viewer" src="./viewer/viewer.html"></iframe>
+            </section>
+        </main>
+        <script src="./editor.min.js"></script>
+    </body>
+</html>

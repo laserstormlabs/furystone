@@ -30,8 +30,8 @@ export class GameBuilder {
         enemies: [],
         potions: [],
         target_location: null,
-        map_name: 'original',
-        starting_point: { x: 50, y: 100 },
+        map_name: 'empty',
+        starting_point: { x: 50, y: 50 },
         show_intro: false,
         intro_content: []
     }
@@ -97,11 +97,28 @@ export class GameBuilder {
 
     start_game() {
 
+        this.handle_event("game_start", this.show_player_position);
+        this.handle_event("player_move", this.show_player_position);
+
         this.game = new Game(GAME_CONFIG);
 
         this.game.registry.set("level_data", this.level_data);
         this.game.registry.set("callbacks", this.callbacks);
 
+    }
+
+    show_player_position(game) {
+        var player_x = Math.floor(game.player.x)
+        var player_y = Math.floor(game.player.y)
+        var position = "x:"+ player_x + " y:" + player_y
+    
+        if (!game.has_text("player_position")) {
+            var text_x = game.width - 120
+            var text_y = game.height - 50
+            game.add_text("player_position", text_x, text_y, position, 24)
+        } else {
+            game.update_text("player_position", position)
+        }
     }
 
 }

@@ -33,6 +33,10 @@ export class Player extends Physics.Arcade.Sprite {
         return this.game_data.current_magic;
     }
 
+    set magic(value) {
+        this.game_data.current_magic = value;
+    }
+
     get max_magic() {
         return this.game_data.max_magic;
     }

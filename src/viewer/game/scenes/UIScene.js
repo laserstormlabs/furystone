@@ -39,11 +39,11 @@ export class UIScene extends Scene {
     }
 
     preload() {
-        this.load.spritesheet('guide_idle', 'game-assets/sprites/guide_idle.png', { frameWidth: 30, frameHeight: 40 });
+        this.load.spritesheet('guide_idle', GAME_ASSET_PATH + '/sprites/guide_idle.png', { frameWidth: 30, frameHeight: 40 });
         
-        this.load.spritesheet('target_idle_guidance', 'game-assets/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
-        this.load.spritesheet('target_aura_guidance', 'game-assets/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.spritesheet('target_chest_guidance', 'game-assets/sprites/chest_empty.png', { frameWidth: 48, frameHeight: 32 });
+        this.load.spritesheet('target_idle_guidance', GAME_ASSET_PATH + '/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('target_aura_guidance', GAME_ASSET_PATH + '/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.spritesheet('target_chest_guidance', GAME_ASSET_PATH + '/sprites/chest_empty.png', { frameWidth: 48, frameHeight: 32 });
     }
 
     createMessageBackground() {
