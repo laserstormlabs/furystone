@@ -54,7 +54,7 @@ builder.add_enemy("chomper_tiny", 558, 818)
 
 var enemy_x = 400
 while (enemy_x < 500) {
-    builder.add_enemy("skeleton", enemy_x, 120)
+    //builder.add_enemy("skeleton", enemy_x, 120)
     enemy_x += 20
 }
 
@@ -166,7 +166,7 @@ builder.set_interval(update_timer, 1000);
 
 function light_attack(game) {
     var player = game.player
-    if (player.magic >= 10) {//0 && !player.attacking) {
+    if (player.magic >= 10 && !player.attacking) {
         player.attack("light")
         var new_magic = player.magic - 10
         player.magic = new_magic
@@ -179,7 +179,7 @@ builder.handle_event("keydown-A", light_attack)
 
 function heavy_attack(game) {
     var player = game.player
-    if (player.magic > 0 && !player.attacking) {
+    if (player.magic > 20 && !player.attacking) {
         player.attack("heavy")
         player.decrease_magic(20)
         game.update_magic_bar(player.magic)
@@ -191,8 +191,10 @@ builder.handle_event("keydown-S", heavy_attack)
 
 function player_gets_attacked(game, enemy) {
     var player = game.player
-    player.decrease_health(enemy.attack_damage)
+    var new_health = player.health - enemy.attack_damage
+    player.health = new_health
     game.update_health_bar(player.health)
+    player.show_effect("damage")
 
     /* Have "warlock" enemy steal magic from player */
     if (enemy.name == "warlock") {
@@ -221,7 +223,11 @@ builder.handle_event("player_gets_attacked", player_gets_attacked)
 
 function enemy_gets_attacked(game, enemy, attack) {
     enemy.is_stunned = true
-    enemy.decrease_health(attack.damage)
+    var new_health = enemy.health - attack.damage
+    if (new_health < 0) {
+        new_health = 0
+    }
+    enemy.health = new_health
     enemy.update_health_bar(enemy.health)
     attack.push_back(enemy, attack.pushback)
 

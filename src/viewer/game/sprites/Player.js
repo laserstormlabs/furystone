@@ -16,12 +16,12 @@ export class Player extends Physics.Arcade.Sprite {
 
         this.setPushable(false);
         this.game_data = {
-            max_health: 50,
-            current_health: 50,
-            max_magic: 100,
-            current_magic: 100,
+            max_health: 500,
+            current_health: 500,
+            max_magic: 1000,
+            current_magic: 1000,
             last_horizontal_direction: 'right',
-            movement_speed: 100
+            movement_speed: 300
         }
         this.name = "player";
         this.setBodySize(26, 28);
@@ -34,7 +34,7 @@ export class Player extends Physics.Arcade.Sprite {
     }
 
     set magic(value) {
-        this.game_data.current_magic = value;
+        this.game_data.current_magic = Math.max(value, 0);
     }
 
     get max_magic() {
@@ -43,6 +43,10 @@ export class Player extends Physics.Arcade.Sprite {
 
     get health() {
         return this.game_data.current_health;
+    }
+
+    set health(value) {
+        this.game_data.current_health = Math.max(value, 0);
     }
 
     get attacking() {
@@ -69,8 +73,17 @@ export class Player extends Physics.Arcade.Sprite {
             this.game_data.current_health - decrement,
             0
         );
-        this.scene.player_lose_health_sprite.setVisible(true);
-        this.scene.player_lose_health_sprite.anims.play("player_lose_health");
+    }
+
+    show_effect(type) {
+        if (type === "damage") {
+            this.scene.player_lose_health_sprite.setVisible(true);
+            this.scene.player_lose_health_sprite.anims.play("player_lose_health");
+        }
+        if (type === "power_up") {
+            this.scene.player_gain_magic_sprite.setVisible(true);
+            this.scene.player_gain_magic_sprite.anims.play("player_gain_magic");
+        }
     }
 
     increase_magic(increment) {
@@ -78,8 +91,6 @@ export class Player extends Physics.Arcade.Sprite {
             this.game_data.current_magic + increment,
             this.game_data.max_magic
         );
-        this.scene.player_gain_magic_sprite.setVisible(true);
-        this.scene.player_gain_magic_sprite.anims.play("player_gain_magic");
     }
 
     decrease_magic(decrement) {

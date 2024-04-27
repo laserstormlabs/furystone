@@ -72,6 +72,11 @@ export class Game extends PhaserGame {
         return gameScene.addEnemy(type, x, y);
     }
 
+    add_potion(color, x, y) {
+        const gameScene = this.scene.getScene("GameScene");
+        return gameScene.addPotion(color, x, y);
+    }
+
     update_magic_bar(new_value) {
         const uiScene = this.scene.getScene("UIScene");
         if (new_value < 0) {

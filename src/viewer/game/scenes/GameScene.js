@@ -468,18 +468,11 @@ export class GameScene extends Scene {
 
             for (let potion_data of this.level_data.potions) {
 
-                let sprite_name = "potion_" + potion_data.color;
-
-                let potion = new Potion({
-                    scene: this,
-                    x: potion_data.position.x, 
-                    y: potion_data.position.y, 
-                    color: potion_data.color
-                });
-
-                this.potions.add(potion);
-
-                potion.anims.play(sprite_name, true);
+                this.addPotion(
+                    potion_data.color,
+                    potion_data.position.x,
+                    potion_data.position.y
+                );
 
             }
 
@@ -641,6 +634,24 @@ export class GameScene extends Scene {
         this.physics.add.collider(enemy, this.dungeon_layer);
 
         return enemy;
+    }
+
+    addPotion(color, x, y) {
+
+        let sprite_name = "potion_" + color;
+
+        let potion = new Potion({
+            scene: this,
+            x: x, 
+            y: y, 
+            color: color
+        });
+
+        this.potions.add(potion);
+
+        potion.anims.play(sprite_name, true);
+
+        return potion;
     }
 
     startPlayerAttack(type) {

@@ -205,6 +205,10 @@ export class Enemy extends Physics.Arcade.Sprite {
         return this.game_data.current_health;
     }
 
+    set health(value) {
+        this.game_data.current_health = value;
+    }
+
     get attack_damage() {
         return this.game_data.attack_damage;
     }

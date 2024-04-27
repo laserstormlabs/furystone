@@ -19,6 +19,38 @@ let editor = new EditorView({
   dark: true
 });
 
+const load_code_button = document.getElementById("load-code");
+
+load_code_button.addEventListener("click", async function() {
+
+  let filename = prompt("Password?");
+
+  if (filename === "" || filename === null) {
+    return;
+  }
+
+  try {
+    let response = await fetch("./completed/" + filename + ".js");
+    if (response.status === 200) {
+
+      let completed_code = await response.text();
+
+      editor.dispatch({
+        changes: {
+          from: 0,
+          to: editor.state.doc.length,
+          insert: completed_code
+        }
+      });
+      
+    } else {
+      alert("Wrong password!");
+    }
+  } catch (error) {
+    alert("Something went wrong!");
+  }
+})
+
 const viewer_iframe = document.getElementById("viewer");
 
 let reload_listener_set = false;
