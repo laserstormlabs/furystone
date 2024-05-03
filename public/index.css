@@ -85,14 +85,30 @@ button#run {
     cursor: pointer;
     color: #FFF;
     text-transform: uppercase;
-    font-size: 2.2rem;
-    font-family: 'Monogram';
-    font-family: "Honk";
-    font-palette: --titlePalette;
-    transition: background-color .2s;
+    font-size: 2.5rem;
+    font-family: "Monogram", monospace;
+    transition: filter .2s;
 }
 button#run:hover {
-    background-color: #6d40f5;
+    filter: brightness(120%);
+}
+#load-code {
+    font-family: "Monogram", monospace;
+    color: #5624ed;
+    padding: .2rem .4rem;
+    margin-left: 1rem;
+    background-color: #EEE;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: -2px 2px 0 #5624ed;
+    transition: transform .2s;
+}
+#load-code:active {
+    box-shadow: none;
+    transform: translate(-2px, 2px);
 }
 #viewer-container {
     display: flex;

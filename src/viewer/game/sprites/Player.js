@@ -16,12 +16,12 @@ export class Player extends Physics.Arcade.Sprite {
 
         this.setPushable(false);
         this.game_data = {
-            max_health: 500,
-            current_health: 500,
-            max_magic: 1000,
-            current_magic: 1000,
+            max_health: 50,
+            current_health: 50,
+            max_magic: 100,
+            current_magic: 100,
             last_horizontal_direction: 'right',
-            movement_speed: 300
+            movement_speed: 100
         }
         this.name = "player";
         this.setBodySize(26, 28);
@@ -34,7 +34,13 @@ export class Player extends Physics.Arcade.Sprite {
     }
 
     set magic(value) {
-        this.game_data.current_magic = Math.max(value, 0);
+        if (value < 0) {
+            value = 0;
+        }
+        if (value > this.game_data.max_magic) {
+            value = this.game_data.max_magic;
+        }
+        this.game_data.current_magic = value;
     }
 
     get max_magic() {
@@ -45,8 +51,18 @@ export class Player extends Physics.Arcade.Sprite {
         return this.game_data.current_health;
     }
 
+    get max_health() {
+        return this.game_data.max_health;
+    }
+
     set health(value) {
-        this.game_data.current_health = Math.max(value, 0);
+        if (value < 0) {
+            value = 0;
+        }
+        if (value > this.game_data.max_health) {
+            value = this.game_data.max_health;
+        }
+        this.game_data.current_health = value;
     }
 
     get attacking() {

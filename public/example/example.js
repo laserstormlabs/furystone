@@ -61,8 +61,8 @@ while (enemy_x < 500) {
 /* Add potions to the level */
 
 builder.add_potion("blue", 531, 73)
-builder.add_potion("blue", 945, 204)
-builder.add_potion("blue", 976, 832)
+//builder.add_potion("blue", 945, 204)
+//builder.add_potion("blue", 976, 832)
 
 builder.add_potion("green", 212, 492)
 
@@ -80,17 +80,27 @@ function player_collects_potion(game, potion) {
     /* Have blue potion restore magic */
     if (potion.color == "blue" && player.magic < player.max_magic) {
         potion.destroy()
-        player.increase_magic(10)
+        player.magic = player.magic + 10
         game.update_magic_bar(player.magic)
+    }
+
+    /* Have red potion restore health */
+    if (potion.color == "red" && player.health < player.max_health) {
+        potion.destroy()
+        player.health = player.health + 10
+        game.update_health_bar(player.health)
     }
 
     /* Have green potion increase speed temporarily */
     if (potion.color == "green") {
         potion.destroy()
         player.speed = player.speed * 2
-        setTimeout(function() {
+
+        function back_to_normal_speed() {
             player.speed = player.speed/2
-        }, 5000)
+        }
+
+        setTimeout(back_to_normal_speed, 5000)
     }
 
     /* Have silver potion make player invisible temporarily */
@@ -102,16 +112,18 @@ function player_collects_potion(game, potion) {
             enemy.can_see_player = false;
         }
 
-        setTimeout(function() {
+        function visible_again() {
             player.alpha = 1
             for (var enemy of game.enemies) {
                 enemy.can_see_player = true;
             }
-        }, 5000)
+        }
+
+        setTimeout(visible_again, 5000)
     }
 }
 
-builder.handle_event("player_collects_potion", player_collects_potion);
+builder.handle_event("player_touches_potion", player_collects_potion);
 
 /* Set the location of the target (Fury Stone) */
 
@@ -247,10 +259,16 @@ builder.handle_event("enemy_gets_attacked", enemy_gets_attacked)
 
 function player_attack_ends(game) {
     var player = game.player
-    var potions_left = game.potions.length;
-    if (!game.stone_destroyed && player.magic === 0 && potions_left === 0) {
+    var found_blue_potion = false;
+    for (var potion of game.potions) {
+        if (potion.color == "blue") {
+            found_blue_potion = true;
+            break;
+        }
+    }
+    if (game.stone_destroyed == false && player.magic == 0 && found_blue_potion == false) {
         game.lose([
-            "Your magic is spent, and there are no potions left in the dungeon.",
+            "Your magic is spent, and there are no blue potions left in the dungeon.",
             "( Press 'ENTER' to try again )"
         ])
     }

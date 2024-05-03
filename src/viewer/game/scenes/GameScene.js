@@ -982,24 +982,10 @@ export class GameScene extends Scene {
     }
 
     playerCollectsPotion(player, potion) {
-
-        if (typeof this.user_defined_callbacks.event.player_collects_potion !== 'undefined') {
-            for (let callback of this.user_defined_callbacks.event.player_collects_potion) {
+        if (typeof this.user_defined_callbacks.event.player_touches_potion !== 'undefined') {
+            for (let callback of this.user_defined_callbacks.event.player_touches_potion) {
                 callback(this.game, potion);
             }
         }
-
-        /*if (this.game_is_over || player.game_data.current_magic === player.game_data.max_magic) {
-            return;
-        }
-
-        player.increase_magic(potion.game_data.value);
-
-        this.events.emit("update_player_magic", player.get_magic_percentage());
-        potion.destroy();
-
-        this.player_gain_magic_sprite.setVisible(true);
-        this.player_gain_magic_sprite.anims.play("player_gain_magic");
-        */
     }
 }
