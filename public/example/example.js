@@ -130,7 +130,7 @@ builder.handle_event("player_touches_potion", player_collects_potion);
 var target_x = 628
 var target_y = 1208
 
-builder.set_target_location(target_x, target_y)
+builder.add_fury_stone("white", target_x, target_y)
 
 /* Put two enemies on either side of the target */
 
@@ -143,7 +143,7 @@ function game_start(game) {
 
     var timer_x = game.width - 50
     var timer_y = 10
-    var seconds_remaining = 60
+    var seconds_remaining = 600
     game.set_data("seconds_remaining", seconds_remaining)
     game.add_text("timer", timer_x, timer_y, seconds_remaining, 32)
 
@@ -266,7 +266,7 @@ function player_attack_ends(game) {
             break;
         }
     }
-    if (game.stone_destroyed == false && player.magic == 0 && found_blue_potion == false) {
+    if (game.fury_stones.length > 0 && player.magic == 0 && found_blue_potion == false) {
         game.lose([
             "Your magic is spent, and there are no blue potions left in the dungeon.",
             "( Press 'ENTER' to try again )"
@@ -285,12 +285,11 @@ builder.handle_event("player_attack_ends", player_attack_ends)
 
 /* Event handler for player destroying the Fury Stone */
 //let hit_count = 0;
-function player_hits_stone(game) {
-    //hit_count++;
-    //if (hit_count == 3) {
-        game.destroy_stone();
+function player_hits_stone(game, stone) {
+    game.destroy_stone(stone);
+    if (game.fury_stones.length === 0) {
         game.win(["You have done well."]);
-    //}
+    }
 }
 builder.handle_event("player_hits_stone", player_hits_stone)
 

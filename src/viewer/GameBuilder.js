@@ -29,11 +29,15 @@ export class GameBuilder {
     level_data = {
         enemies: [],
         potions: [],
-        target_location: null,
+        fury_stones: [],
         map_name: 'empty',
         starting_point: { x: 50, y: 50 },
         show_intro: false,
-        intro_content: []
+        intro_content: [],
+        player_max_magic: 100,
+        player_max_health: 100,
+        player_speed: 100,
+        screen_shake_enabled: true
     }
 
     callbacks = {
@@ -66,6 +70,22 @@ export class GameBuilder {
         this.callbacks.interval[ms].push(callback);
     }
 
+    set_player_max_magic(value) {
+        this.level_data.player_max_magic = value;
+    }
+
+    set_player_max_health(value) {
+        this.level_data.player_max_health = value;
+    }
+
+    set_player_speed(value) {
+        this.level_data.player_speed = value;
+    }
+
+    disable_screen_shake() {
+        this.level_data.screen_shake_enabled = false;
+    }
+
     add_enemy(type, x, y) {
         this.level_data.enemies.push({
             type: type,
@@ -80,8 +100,11 @@ export class GameBuilder {
         })
     }
     
-    set_target_location(x, y) {
-        this.level_data.target_location = { x, y };
+    add_fury_stone(color, x, y) {
+        this.level_data.fury_stones.push({
+            color: color,
+            position: { x, y }
+        });
     }
 
     set_time_limit(seconds) {

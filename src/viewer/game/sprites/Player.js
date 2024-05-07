@@ -16,12 +16,12 @@ export class Player extends Physics.Arcade.Sprite {
 
         this.setPushable(false);
         this.game_data = {
-            max_health: 50,
-            current_health: 50,
-            max_magic: 100,
-            current_magic: 100,
+            max_health: config.scene.level_data.player_max_health,
+            current_health: config.scene.level_data.player_max_health,
+            max_magic: config.scene.level_data.player_max_magic,
+            current_magic: config.scene.level_data.player_max_magic,
             last_horizontal_direction: 'right',
-            movement_speed: 100
+            movement_speed: config.scene.level_data.player_speed
         }
         this.name = "player";
         this.setBodySize(26, 28);

@@ -10,11 +10,6 @@ export class Game extends PhaserGame {
         return gameScene.player;
     }
 
-    get stone_destroyed() {
-        const gameScene = this.scene.getScene("GameScene");
-        return gameScene.target_is_destroyed;
-    }
-
     get enemies() {
         const gameScene = this.scene.getScene("GameScene");
         return gameScene.enemies.children.entries;
@@ -23,6 +18,11 @@ export class Game extends PhaserGame {
     get potions() {
         const gameScene = this.scene.getScene("GameScene");
         return gameScene.potions.children.entries;
+    }
+
+    get fury_stones() {
+        const gameScene = this.scene.getScene("GameScene");
+        return gameScene.fury_stones.children.entries;
     }
 
     get width() {
@@ -99,9 +99,10 @@ export class Game extends PhaserGame {
         uiScene.setPlayerHealthBarValue(new_value/this.player.game_data.max_health);
     }
 
-    destroy_stone() {
+    destroy_stone(stone) {
+        console.log("Game destroy stone")
         const gameScene = this.scene.getScene("GameScene");
-        gameScene.destroyTarget();
+        gameScene.destroyTarget(stone);
     }
 
     win(message_lines) {

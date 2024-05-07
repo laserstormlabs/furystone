@@ -9,12 +9,6 @@ const ENEMY_HEALTH_BAR_HEIGHT = 5;
 const ENEMY_HEALTH_BAR_FILL_COLOR = 0xCC0000;
 const ENEMY_HEALTH_BAR_VOID_COLOR = 0x000000;
 
-const MAP_COLORS = {
-    empty: 'purple',
-    original: 'purple',
-    training_ground: 'green'
-}
-
 export class GameScene extends Scene {
 
     player;
@@ -23,12 +17,12 @@ export class GameScene extends Scene {
     dungeon_layer;
     enemies;
     potions;
+    fury_stones;
     seconds_remaining;
     timer_events = [];
     target = null;
     target_aura = null;
     target_chest = null;
-    target_is_destroyed = false;
     target_hit_by_current_attack = false;
     player_gain_magic_sprite;
     player_lose_health_sprite;
@@ -49,10 +43,9 @@ export class GameScene extends Scene {
     preload() {
 
         let map_name = this.level_data.map_name;
-        let tileset_name = MAP_COLORS[map_name];
 
-        this.load.image('tiles', GAME_ASSET_PATH + '/tilesets/' + tileset_name + '.png?1=4');
-        this.load.tilemapCSV('map', GAME_ASSET_PATH + '/maps/' + map_name + '.csv?1=3');
+        this.load.image('tiles', GAME_ASSET_PATH + '/tilesets/purple.png?1=6');
+        this.load.tilemapCSV('map', GAME_ASSET_PATH + '/maps/' + map_name + '.csv?1=5');
 
         this.load.spritesheet('player_run', GAME_ASSET_PATH + '/sprites/player/run.png', { frameWidth: 32, frameHeight: 38 });
         this.load.spritesheet('player_idle', GAME_ASSET_PATH + '/sprites/player/idle.png', { frameWidth: 32, frameHeight: 34 });
@@ -105,7 +98,12 @@ export class GameScene extends Scene {
         this.load.spritesheet('lizard_man_run', GAME_ASSET_PATH + '/sprites/enemies/lizard_man_run.png?1=1', { frameWidth: 30, frameHeight: 42 });
         this.load.spritesheet('lizard_man_idle', GAME_ASSET_PATH + '/sprites/enemies/lizard_man_idle.png?1=1', { frameWidth: 32, frameHeight: 38 });
 
-        this.load.spritesheet('target_idle', GAME_ASSET_PATH + '/sprites/stone.png', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('fury_stone_idle_green', GAME_ASSET_PATH + '/sprites/stone.png?1=1', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('fury_stone_idle_red', GAME_ASSET_PATH + '/sprites/stone-red.png?1=1', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('fury_stone_idle_blue', GAME_ASSET_PATH + '/sprites/stone-blue.png?1=1', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('fury_stone_idle_white', GAME_ASSET_PATH + '/sprites/stone-white.png?1=1', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('fury_stone_idle_black', GAME_ASSET_PATH + '/sprites/stone-black.png?1=1', { frameWidth: 32, frameHeight: 32 });
+        
         this.load.spritesheet('target_aura', GAME_ASSET_PATH + '/sprites/effects/target_aura.png', { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('target_chest', GAME_ASSET_PATH + '/sprites/chest_empty.png', { frameWidth: 48, frameHeight: 32 });
         this.load.spritesheet('target_destruction', GAME_ASSET_PATH + '/sprites/effects/target_destruction.png', { frameWidth: 256, frameHeight: 256 });
@@ -122,7 +120,8 @@ export class GameScene extends Scene {
         this.map.setCollision([
             7, 27, 47, 
             76, 19, 39, 69, 59,
-            67, 87, 89
+            67, 87, 89,
+            56
         ]);
 
         this.anims.create({
@@ -442,11 +441,36 @@ export class GameScene extends Scene {
         });
 
         this.anims.create({
-            key: 'target_idle',
-            frames: this.anims.generateFrameNumbers('target_idle', { frames: [0, 1, 2, 3] }),
+            key: 'fury_stone_idle_green',
+            frames: this.anims.generateFrameNumbers('fury_stone_idle_green', { frames: [0, 1, 2, 3] }),
             frameRate: 5,
             repeat: -1
         });
+        this.anims.create({
+            key: 'fury_stone_idle_red',
+            frames: this.anims.generateFrameNumbers('fury_stone_idle_red', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'fury_stone_idle_blue',
+            frames: this.anims.generateFrameNumbers('fury_stone_idle_blue', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'fury_stone_idle_black',
+            frames: this.anims.generateFrameNumbers('fury_stone_idle_black', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'fury_stone_idle_white',
+            frames: this.anims.generateFrameNumbers('fury_stone_idle_white', { frames: [0, 1, 2, 3] }),
+            frameRate: 5,
+            repeat: -1
+        });
+
         this.anims.create({
             key: 'target_aura',
             frames: this.anims.generateFrameNumbers('target_aura', { start: 0, end: 18 }),
@@ -478,23 +502,35 @@ export class GameScene extends Scene {
 
         }
 
-        if (this.level_data.target_location !== null) {
+        this.fury_stones = this.physics.add.group();
+        this.fury_stone_chests = this.physics.add.group();
+        this.fury_stone_auras = this.physics.add.group();
 
-            this.target_chest = this.physics.add.sprite(
-                this.level_data.target_location.x, 
-                this.level_data.target_location.y + 20, 
-                'target_chest', 
-                0
-            ).setImmovable();
+        if (this.level_data.fury_stones.length > 0) {
 
-            this.target_aura = this.physics.add.sprite(
-                this.level_data.target_location.x, 
-                this.level_data.target_location.y - 5, 
-                'target_aura', 
-                0
-            ).setPushable(false);
-            this.target_aura.name = "target_aura";
-            this.target_aura.anims.play("target_aura");
+            let stone_count = 0;
+
+            for (let fury_stone_data of this.level_data.fury_stones) {
+
+                this.fury_stone_chests.create(
+                    fury_stone_data.position.x, 
+                    fury_stone_data.position.y + 20, 
+                    'target_chest', 
+                    0
+                ).setImmovable();
+
+                let aura = this.fury_stone_auras.create(
+                    fury_stone_data.position.x, 
+                    fury_stone_data.position.y - 5, 
+                    'target_aura', 
+                    0
+                ).setPushable(false);
+                aura.name = "fury_stone_aura_" + stone_count;
+                aura.anims.play("target_aura");
+
+                stone_count++;
+
+            }
         }
 
         this.player = new Player({
@@ -534,18 +570,26 @@ export class GameScene extends Scene {
             this.player_teleport_sprite.setVisible(false);
         });
 
-        if (this.level_data.target_location !== null) {
+        if (this.level_data.fury_stones.length > 0) {
 
-            this.target = this.physics.add.sprite(
-                this.level_data.target_location.x, 
-                this.level_data.target_location.y, 
-                'target_idle', 
-                0
-            ).setPushable(false);
-            this.target.name = "target";
-            this.target.anims.play("target_idle");
+            let stone_count = 0;
 
-            this.physics.add.collider(this.player, this.target_chest);
+            for (let fury_stone_data of this.level_data.fury_stones) {
+
+                this.target = this.fury_stones.create(
+                    fury_stone_data.position.x, 
+                    fury_stone_data.position.y, 
+                    'fury_stone_idle_' + fury_stone_data.color, 
+                    0
+                ).setPushable(false);
+                this.target.name = "fury_stone_" + stone_count;
+                this.target.anims.play('fury_stone_idle_' + fury_stone_data.color);
+
+                stone_count++;
+            
+            }
+
+            this.physics.add.collider(this.player, this.fury_stone_chests);
 
         }
 
@@ -664,17 +708,18 @@ export class GameScene extends Scene {
         this.player_attack.anims.play('player_attack_' + type, true);
 
         this.physics.add.overlap(this.player_attack, this.enemies, this.enemyGetsAttacked, null, this);
-        
-        if (this.target !== null) {
-            this.physics.add.overlap(this.player_attack, this.target, this.targetGetsAttacked, null, this);
+
+        if (this.fury_stones.children.size > 0) {
+            this.physics.add.overlap(this.player_attack, this.fury_stones, this.targetGetsAttacked, null, this);
         }
 
         let attack_length = 500;
         this.player.anims.play('player_attack', true);
-        this.cameras.main.shake(attack_length, this.player_attack.properties.shake);
+        if (this.level_data.screen_shake_enabled) {
+            this.cameras.main.shake(attack_length, this.player_attack.properties.shake);
+        }
         this.player.game_data.attack_time_remaining = attack_length;
         this.player.game_data.is_attacking = true;
-        //this.events.emit('update_player_magic', this.player.get_magic_percentage());
     }
 
     update(time, delta) {
@@ -929,12 +974,11 @@ export class GameScene extends Scene {
 
     }
 
-    destroyTarget() {
-        this.target_is_destroyed = true;
+    destroyTarget(stone) {
 
         let destruction_effect = this.physics.add.sprite(
-            this.target.x + 10,
-            this.target.y,
+            stone.x + 10,
+            stone.y,
             'target_destruction', 
             0
         );
@@ -945,8 +989,15 @@ export class GameScene extends Scene {
             destruction_effect.destroy();
         });
 
-        this.target.destroy();
-        this.target_aura.destroy();
+        let stone_count = stone.name.replace("fury_stone_", "");
+
+        stone.destroy();
+
+        this.fury_stone_auras.children.each((aura) => {
+            if (aura.name === "fury_stone_aura_" + stone_count) {
+                aura.destroy();
+            }
+        });
     }
 
     targetGetsAttacked(attack, target) {
@@ -956,7 +1007,7 @@ export class GameScene extends Scene {
         this.target_hit_by_current_attack = true;
         if (typeof this.user_defined_callbacks.event.player_hits_stone !== 'undefined') {
             for (let callback of this.user_defined_callbacks.event.player_hits_stone) {
-                callback(this.game);
+                callback(this.game, target);
             }
         }
     }
