@@ -28,6 +28,7 @@ builder.set_starting_point(50, 130)
 
 /* Add enemies to the level */
 
+builder.add_enemy("skeleton", 400, 120)
 builder.add_enemy("zombie_tiny", 530, 150)
 builder.add_enemy("warlock", 380, 170)
 builder.add_enemy("zombie_large", 650, 310)
@@ -41,6 +42,7 @@ builder.add_enemy("zombie_ice", 950, 270)
 builder.add_enemy("chomper_small", 300, 540)
 builder.add_enemy("zombie_large", 350, 520)
 builder.add_enemy("zombie_large", 500, 818)
+builder.add_enemy("ogre", 925, 700)
 
 builder.add_enemy("chomper_tiny", 608, 768)
 builder.add_enemy("chomper_tiny", 658, 768)
@@ -50,19 +52,12 @@ builder.add_enemy("chomper_tiny", 608, 818)
 builder.add_enemy("chomper_tiny", 658, 818)
 builder.add_enemy("chomper_tiny", 558, 818)
 
-/* Add multiple enemies with loop */
-
-var enemy_x = 400
-while (enemy_x < 500) {
-    //builder.add_enemy("skeleton", enemy_x, 120)
-    enemy_x += 20
-}
-
 /* Add potions to the level */
 
 builder.add_potion("blue", 531, 73)
-//builder.add_potion("blue", 945, 204)
-//builder.add_potion("blue", 976, 832)
+builder.add_potion("blue", 945, 204)
+builder.add_potion("blue", 880, 590)
+builder.add_potion("blue", 976, 832)
 
 builder.add_potion("green", 212, 492)
 
@@ -130,7 +125,7 @@ builder.handle_event("player_touches_potion", player_collects_potion);
 var target_x = 628
 var target_y = 1208
 
-builder.add_fury_stone("white", target_x, target_y)
+builder.add_fury_stone("green", target_x, target_y)
 
 /* Put two enemies on either side of the target */
 
@@ -143,7 +138,7 @@ function game_start(game) {
 
     var timer_x = game.width - 50
     var timer_y = 10
-    var seconds_remaining = 600
+    var seconds_remaining = 60
     game.set_data("seconds_remaining", seconds_remaining)
     game.add_text("timer", timer_x, timer_y, seconds_remaining, 32)
 
@@ -242,15 +237,6 @@ function enemy_gets_attacked(game, enemy, attack) {
     enemy.health = new_health
     enemy.update_health_bar(enemy.health)
     attack.push_back(enemy, attack.pushback)
-
-    /* Clone lizard man enemy when it is hit */
-    if (enemy.name == "lizard_man" && enemy.health > 0) {
-        var clone = game.add_enemy("lizard_man", enemy.x + 10, enemy.y - 10)
-        // Omit this first to demonstrate bug
-        clone.is_stunned = true;
-        clone.set_velocity(enemy.velocity.x, enemy.velocity.y)
-    }
-
 }
 
 builder.handle_event("enemy_gets_attacked", enemy_gets_attacked)
@@ -284,7 +270,6 @@ function player_attack_ends(game) {
 builder.handle_event("player_attack_ends", player_attack_ends)
 
 /* Event handler for player destroying the Fury Stone */
-//let hit_count = 0;
 function player_hits_stone(game, stone) {
     game.destroy_stone(stone);
     if (game.fury_stones.length === 0) {

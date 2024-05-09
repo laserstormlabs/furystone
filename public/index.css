@@ -1,143 +1,104 @@
-@font-face {
-    font-family: "Monogram";
-    src: url("./monogram.ttf");
-}
-@font-palette-values --titlePalette {
-    font-family: "Honk";
-    base-palette: 7;
-}
 body {
-    margin: 0;
-    padding: 0;
-}
-header {
-    margin: 0;
-    background-color: #222;    
-    padding: 0 2rem;
-    font-family: monospace;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    height: 6vh;
-    min-height: 2rem;
-}
-#title-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
-#title-container img {
-    margin-right: .7rem;
-}
-h1 {
-    font-size: 1.6rem;
-    margin: 0;
-    color: #EEE;
-    font-family: "Honk";
-    font-palette: --titlePalette;
-}
-.for-hackers {
-    font-family: "Monogram", monospace;
-    background-color: #5624ed;
-    padding: .2rem .4rem;
-    margin-left: 1rem;
-    color: #EEE;
-    font-size: 1.2rem;
-    text-transform: uppercase;
-}
-#menu-container {
-    text-align: center;
+    background-color: #222;
 }
 main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-family: "Monogram", monospace;
+}
+main p {
+    font-size: 1.5rem;
+    color: #FFF;
+    line-height: 1.7rem;
+    text-align: center;
+}
+main p a {
+    color: #c5b6f2;
+    border-bottom: 2px solid;
+    text-decoration: none;
+    cursor: pointer;
+}
+video {
+    border: 3px solid #5624ed;
+}
+div.links {
+    margin-top: 2rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 94vh;
 }
-section {
-    flex-grow: 1;
-    height: 94vh;
-}
-#editor-container {
-    width: 40vw;
-}
-#editor {
-    font-family: monospace;
-    font-size: 1rem;
-}
-div#editor .cm-editor {
-    overflow: auto;
-    height: 84vh;
-}
-div#editor .cm-editor .cm-content {
-    padding: .7rem 0;
-    margin: 0 .7rem;
-}
-button#run {
-    height: 10vh;
-    background-color: #5624ed;
-    border-width: 0;
-    width: 100%;
-    cursor: pointer;
-    color: #FFF;
-    text-transform: uppercase;
-    font-size: 2.5rem;
-    font-family: "Monogram", monospace;
-    transition: filter .2s;
-}
-button#run:hover {
-    filter: brightness(120%);
-}
-#load-code {
+div.links a {
     font-family: "Monogram", monospace;
     color: #5624ed;
-    padding: .2rem .4rem;
+    padding: 1rem 2rem;
     margin-left: 1rem;
     background-color: #EEE;
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     text-transform: uppercase;
     border: none;
     cursor: pointer;
     border-radius: 4px;
     box-shadow: -2px 2px 0 #5624ed;
     transition: transform .2s;
+    text-decoration: none;
 }
-#load-code:active {
+div.links a:first-child {
+    margin: 0;
+}
+div.links a:active {
     box-shadow: none;
     transform: translate(-2px, 2px);
 }
-#viewer-container {
-    display: flex;
-    width: 60vw;
-    position: relative;
+::backdrop {
+    background-color: #000;
+    opacity: .7;
 }
-#click-run {
-    position: absolute;
-    width: 100%;
-    top: 3rem;
-    text-align: center;
-    left: 0;
-    background-color: #1B1B1B;
-    color: #EEE;
-    font-size: 2rem;
-    font-family: 'Monogram';
-    font-family: "Honk";
-    font-palette: --titlePalette;
+#game-asset-list {
+    padding: 0.5rem;
 }
-#click-run .run-wording {
+#game-asset-list-close {
+    float: right;
+    border: none;
+    background-color: transparent;
     color: #5624ed;
-    text-transform: uppercase;
+    font-size: 1.2rem;
+    cursor: pointer;
 }
-#viewer {
-    height: 94vh;
-    flex-grow: 1;
-    border-width: 0;
-    background-color: #1B1B1B;
+#game-asset-list ul {
+    list-style-type: none;
+    margin: 0;
+    font-family: "Monogram", monospace;
+    font-size: 1.5rem;
+    padding: 2rem;
 }
-.hidden {
-    display: none !important;
+#game-asset-list ul li { 
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+#game-asset-list ul li a {
+    color: #5624ed;
+    border-bottom: 2px solid;
+    text-decoration: none; 
+}
+#game-asset-list ul li img {
+    margin-right: 2rem;
+    width: 40px;
+}
+#game-asset-list ul li span {
+    margin-right: 2rem;
+    background-color: #ff77a8;
+    color: #FFF;
+    box-shadow: 2px 2px 0 #1d2b53;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

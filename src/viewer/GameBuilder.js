@@ -31,7 +31,7 @@ export class GameBuilder {
         potions: [],
         fury_stones: [],
         map_name: 'empty',
-        starting_point: { x: 50, y: 50 },
+        starting_point: null,
         show_intro: false,
         intro_content: [],
         player_max_magic: 100,

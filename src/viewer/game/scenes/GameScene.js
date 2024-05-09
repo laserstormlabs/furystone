@@ -9,6 +9,14 @@ const ENEMY_HEALTH_BAR_HEIGHT = 5;
 const ENEMY_HEALTH_BAR_FILL_COLOR = 0xCC0000;
 const ENEMY_HEALTH_BAR_VOID_COLOR = 0x000000;
 
+const DEFAULT_STARTING_POINTS = {
+    original: { x: 100, y: 100 },
+    rectangle: { x: 100, y: 100 },
+    scorpion: { x: 100, y: 100 },
+    skull: { x: 100, y: 100 },
+    stingray: { x: 800, y: 70 }
+}
+
 export class GameScene extends Scene {
 
     player;
@@ -45,7 +53,7 @@ export class GameScene extends Scene {
         let map_name = this.level_data.map_name;
 
         this.load.image('tiles', GAME_ASSET_PATH + '/tilesets/purple.png?1=6');
-        this.load.tilemapCSV('map', GAME_ASSET_PATH + '/maps/' + map_name + '.csv?1=5');
+        this.load.tilemapCSV('map', GAME_ASSET_PATH + '/maps/' + map_name + '.csv?1=6');
 
         this.load.spritesheet('player_run', GAME_ASSET_PATH + '/sprites/player/run.png', { frameWidth: 32, frameHeight: 38 });
         this.load.spritesheet('player_idle', GAME_ASSET_PATH + '/sprites/player/idle.png', { frameWidth: 32, frameHeight: 34 });
@@ -98,7 +106,7 @@ export class GameScene extends Scene {
         this.load.spritesheet('lizard_man_run', GAME_ASSET_PATH + '/sprites/enemies/lizard_man_run.png?1=1', { frameWidth: 30, frameHeight: 42 });
         this.load.spritesheet('lizard_man_idle', GAME_ASSET_PATH + '/sprites/enemies/lizard_man_idle.png?1=1', { frameWidth: 32, frameHeight: 38 });
 
-        this.load.spritesheet('fury_stone_idle_green', GAME_ASSET_PATH + '/sprites/stone.png?1=1', { frameWidth: 32, frameHeight: 32 });
+        this.load.spritesheet('fury_stone_idle_green', GAME_ASSET_PATH + '/sprites/stone-green.png?1=1', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('fury_stone_idle_red', GAME_ASSET_PATH + '/sprites/stone-red.png?1=1', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('fury_stone_idle_blue', GAME_ASSET_PATH + '/sprites/stone-blue.png?1=1', { frameWidth: 32, frameHeight: 32 });
         this.load.spritesheet('fury_stone_idle_white', GAME_ASSET_PATH + '/sprites/stone-white.png?1=1', { frameWidth: 32, frameHeight: 32 });
@@ -533,10 +541,18 @@ export class GameScene extends Scene {
             }
         }
 
+        let starting_point;
+
+        if (this.level_data.starting_point === null) {
+            starting_point = DEFAULT_STARTING_POINTS[this.level_data.map_name];
+        } else {
+            starting_point = this.level_data.starting_point;
+        }
+
         this.player = new Player({
             scene: this, 
-            x: this.level_data.starting_point.x,
-            y: this.level_data.starting_point.y
+            x: starting_point.x,
+            y: starting_point.y
         });
 
         this.physics.add.overlap(this.player, this.dungeon_layer);

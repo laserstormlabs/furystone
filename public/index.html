@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Fury Stone</title>
+        <link rel="icon" type="image/x-icon" href="./stone-icon.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Honk&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="./header.css"></style>
+        <link rel="stylesheet" type="text/css" href="./index.css"></style>
+    </head>
+    <body>
+        <header id="heading" class="homepage">
+            <div id="title-container">
+                <img src="./stone-icon.png" width="24px" />
+                <h1>
+                    Fury Stone
+                </h1>
+            </div>
+        </header>
+        <main>
+            <p>
+                <b>Fury Stone</b> is a Javascript game you can customize and play in your browser.
+            </p>
+            <video width="700px" autoplay loop muted>
+                <source src="./furystone-video-clip.mp4" type="video/mp4" />
+            </video>
+            <div class="links">
+                <a href="./builder">
+                    Game Builder
+                </a>
+                <a href="./example" target="_blank">
+                    Example Game
+                </a>
+            </div>
+            <p>
+                The game was developed with 
+                <a href="https://phaser.io" target="_blank">Phaser</a> and lots of 
+                <a id="game-asset-list-open">free and open-source assets</a>.
+                <br />
+                The Game Builder interface was developed with 
+                <a href="https://codemirror.net/" target="_blank">CodeMirror</a>.
+            </p>
+        </main>
+        <dialog id="game-asset-list">
+            <button id="game-asset-list-close">&#10005;</button>
+            <ul>
+                <li>
+                    <img src="./chort.gif" />
+                    <a href="https://0x72.itch.io/dungeontileset-ii" target="_blank">
+                        Dungeon Tileset II by 0x72
+                    </a>
+                    
+                </li>
+                <li>
+                    <img src="./32x32.gif" />
+                    <a href="https://pixel-zowie.itch.io/1630-pixel-art-effects-all-in-one-season-1" target="_blank">
+                        Pixel Art Effects by Zowie Pixel Art
+                    </a>
+                    
+                </li>
+                <li>
+                    <span>ABC</span>
+                    <a href="https://datagoblin.itch.io/monogram" target="_blank">
+                        Monogram (this font) by datagoblin
+                    </a>
+                </li>
+            </ul>
+        </dialog>
+        <script type="text/javascript">
+            var game_asset_list_dialog = document.getElementById("game-asset-list");
+            var game_asset_list_open = document.getElementById("game-asset-list-open");
+            var game_asset_list_close = document.getElementById("game-asset-list-close");
+            
+            game_asset_list_open.addEventListener("click", function() {
+                game_asset_list_dialog.showModal();
+            });
+
+            game_asset_list_close.addEventListener("click", function() {
+                game_asset_list_dialog.close();
+            });
+        </script>
+    </body>
+</html>
