@@ -22,9 +22,17 @@
                     Game Builder
                 </div>
             </div>
-            <button id="load-code">
-                Load Code
-            </button>
+            <div id="header-buttons-container">
+                <button id="show-enemies">
+                    Enemies
+                </button>
+                <button id="show-maps">
+                    Maps
+                </button>
+                <button id="load-code">
+                    Load Code
+                </button>
+            </div>
         </header>
         <main>
             <section id="editor-container">
@@ -32,13 +40,47 @@
                 <button id="run">Run</button>
             </section>
             <section id="viewer-container">
-                <div id="click-run" class="hidden">
-                    Click <span class="run-wording">Run</span> 
-                    to run your code and play the game!
-                </div>
                 <iframe id="viewer" src="./viewer/viewer.html"></iframe>
             </section>
         </main>
+        <dialog id="maps-dialog" class="builder-options-dialog">
+            <button id="maps-dialog-close" class="builder-options-dialog-close">&#10005;</button>
+            <ul class="builder-options-grid">
+                <li>
+                    <img src="./map-images/original.png" />
+                    <span>original</span>
+                </li>
+                <li>
+                    <img src="./map-images/rectangle.png" />
+                    <span>rectangle</span>
+                </li>
+                <li>
+                    <img src="./map-images/stingray.png" />
+                    <span>stingray</span>
+                </li>
+                <li>
+                    <img src="./map-images/skull.png" />
+                    <span>skull</span>
+                </li>
+                <li>
+                    <img src="./map-images/scorpion.png" />
+                    <span>scorpion</span>
+                </li>
+            </ul>
+        </dialog>
         <script src="./editor.min.js"></script>
+        <script type="text/javascript">
+            var maps_dialog = document.getElementById("maps-dialog");
+            var maps_dialog_open = document.getElementById("show-maps");
+            var maps_dialog_close = document.getElementById("maps-dialog-close");
+            
+            maps_dialog_open.addEventListener("click", function() {
+                maps_dialog.showModal();
+            });
+
+            maps_dialog_close.addEventListener("click", function() {
+                maps_dialog.close();
+            });
+        </script>
     </body>
 </html>

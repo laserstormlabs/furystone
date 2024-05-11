@@ -26,7 +26,7 @@ section {
     height: 94vh;
 }
 #editor-container {
-    width: 50vw;
+    width: 40vw;
 }
 #editor {
     font-family: monospace;
@@ -55,7 +55,13 @@ button#run {
 button#run:hover {
     filter: brightness(120%);
 }
-#load-code {
+#header-buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+#header-buttons-container button {
     font-family: "Monogram", monospace;
     color: #5624ed;
     padding: .2rem .4rem;
@@ -69,13 +75,21 @@ button#run:hover {
     box-shadow: -2px 2px 0 #5624ed;
     transition: transform .2s;
 }
-#load-code:active {
+#header-buttons-container button:active {
     box-shadow: none;
     transform: translate(-2px, 2px);
 }
+#header-buttons-container button#load-code {
+    color: #EEE;
+    background-color: #5624ed;
+    box-shadow: -2px 2px 0 #c5b6f2;
+}
+#header-buttons-container button#load-code:active {
+    box-shadow: none;
+}
 #viewer-container {
     display: flex;
-    width: 50vw;
+    width: 60vw;
     position: relative;
 }
 #click-run {
@@ -88,8 +102,6 @@ button#run:hover {
     color: #EEE;
     font-size: 2rem;
     font-family: 'Monogram';
-    font-family: "Honk";
-    font-palette: --titlePalette;
 }
 #click-run .run-wording {
     color: #5624ed;
@@ -103,4 +115,44 @@ button#run:hover {
 }
 .hidden {
     display: none !important;
+}
+::backdrop {
+    background-color: #000;
+    opacity: .7;
+}
+.builder-options-dialog {
+    border: 1px solid #5624ed;
+}
+.builder-options-dialog-close {
+    float: right;
+    border: none;
+    background-color: transparent;
+    color: #c5b6f2;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+#maps-dialog {
+    background-color: #1B1B1B;
+}
+.builder-options-grid {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin: 0;
+}
+.builder-options-grid li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 2.5rem;
+}
+.builder-options-grid li img {
+    width: 200px;
+    margin-bottom: 1rem;
+}
+.builder-options-grid li span {
+    font-family: 'Monogram';
+    color: #FFF;
+    font-size: 1.6rem;
 }

@@ -5,7 +5,8 @@ import { closeBrackets } from "@codemirror/autocomplete"
 import { javascript } from "@codemirror/lang-javascript"
 import { oneDark } from '@codemirror/theme-one-dark';
 
-let editor = new EditorView({
+const editor_element = document.getElementById("editor");
+const editor = new EditorView({
   extensions: [
     minimalSetup,
     bracketMatching(), 
@@ -15,7 +16,7 @@ let editor = new EditorView({
     javascript(),
     oneDark
   ],
-  parent: document.getElementById("editor"),
+  parent: editor_element,
   dark: true
 });
 
@@ -30,18 +31,20 @@ load_code_button.addEventListener("click", async function() {
   }
 
   try {
-    let response = await fetch("./completed/" + filename + ".js");
+    let response = await fetch("./templates/" + filename + ".js");
     if (response.status === 200) {
 
-      let completed_code = await response.text();
+      let template_code = await response.text();
 
       editor.dispatch({
         changes: {
           from: 0,
           to: editor.state.doc.length,
-          insert: completed_code
+          insert: template_code
         }
       });
+
+      saveEditorContent();
       
     } else {
       alert("Wrong password!");
@@ -119,6 +122,8 @@ if (saved_editor_content !== null && saved_editor_content !== "") {
   });
 
   runUserCode();
+
+  editor_element.scrollTop = 0;
 
 } else {
 
