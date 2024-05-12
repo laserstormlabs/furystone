@@ -123,7 +123,10 @@ if (saved_editor_content !== null && saved_editor_content !== "") {
 
   runUserCode();
 
-  editor_element.scrollTop = 0;
+  setTimeout(() => {
+    editor.scrollDOM.scrollTop = 0;
+  }, 100);
+  
 
 } else {
 
