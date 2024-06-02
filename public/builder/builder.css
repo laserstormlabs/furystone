@@ -30,7 +30,7 @@ section {
 }
 #editor {
     font-family: monospace;
-    font-size: 1rem;
+    font-size: 1.3rem;
 }
 div#editor .cm-editor {
     overflow: auto;

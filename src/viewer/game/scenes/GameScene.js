@@ -14,7 +14,8 @@ const DEFAULT_STARTING_POINTS = {
     rectangle: { x: 100, y: 100 },
     scorpion: { x: 100, y: 100 },
     skull: { x: 100, y: 100 },
-    stingray: { x: 800, y: 70 }
+    stingray: { x: 800, y: 70 },
+    rooms: { x: 400, y: 100 }
 }
 
 export class GameScene extends Scene {
@@ -53,7 +54,7 @@ export class GameScene extends Scene {
         let map_name = this.level_data.map_name;
 
         this.load.image('tiles', GAME_ASSET_PATH + '/tilesets/purple.png?1=6');
-        this.load.tilemapCSV('map', GAME_ASSET_PATH + '/maps/' + map_name + '.csv?1=6');
+        this.load.tilemapCSV('map', GAME_ASSET_PATH + '/maps/' + map_name + '.csv?1=8');
 
         this.load.spritesheet('player_run', GAME_ASSET_PATH + '/sprites/player/run.png', { frameWidth: 32, frameHeight: 38 });
         this.load.spritesheet('player_idle', GAME_ASSET_PATH + '/sprites/player/idle.png', { frameWidth: 32, frameHeight: 34 });
