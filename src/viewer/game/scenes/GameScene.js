@@ -717,6 +717,10 @@ export class GameScene extends Scene {
 
     startPlayerAttack(type) {
 
+        if (this.player.game_data.is_attacking) {
+            return;
+        }
+
         this.player_attack = new PlayerAttack({
             scene: this,
             type: type
@@ -724,7 +728,9 @@ export class GameScene extends Scene {
 
         this.player_attack.anims.play('player_attack_' + type, true);
 
-        this.physics.add.overlap(this.player_attack, this.enemies, this.enemyGetsAttacked, null, this);
+        if (typeof this.user_defined_callbacks.event.enemy_gets_attacked !== 'undefined') {
+            this.physics.add.overlap(this.player_attack, this.enemies, this.enemyGetsAttacked, null, this);
+        }
 
         if (this.fury_stones.children.size > 0) {
             this.physics.add.overlap(this.player_attack, this.fury_stones, this.targetGetsAttacked, null, this);
@@ -756,6 +762,11 @@ export class GameScene extends Scene {
                 this.player.game_data.is_attacking = false;
                 this.player_attack.destroy();
                 this.target_hit_by_current_attack = false;
+
+                this.enemies.children.each((enemy) => {
+                    enemy.game_data.damaged_by_current_attack = false
+                });
+
                 if (typeof this.user_defined_callbacks.event.player_attack_ends !== 'undefined') {
                     for (let callback of this.user_defined_callbacks.event.player_attack_ends) {
                         callback(this.game);
@@ -821,8 +832,7 @@ export class GameScene extends Scene {
                 enemy.game_data.is_touching_player = false;
             }
                 
-            if (enemy.game_data.current_health > 0 && !enemy.game_data.is_touching_player) {
-
+            if (!enemy.game_data.is_dying && !enemy.game_data.is_touching_player) {
                 let distance_from_player_x = this.player.body.x - enemy.body.x;
                 let distance_from_player_y = this.player.body.y - enemy.body.y;
 
@@ -942,7 +952,7 @@ export class GameScene extends Scene {
 
     enemyContactsPlayer(player, enemy) {
 
-        if (this.game_is_over || enemy.game_data.current_health === 0) {
+        if (this.game_is_over || enemy.game_data.is_dying) {
             return;
         }
 
@@ -982,11 +992,9 @@ export class GameScene extends Scene {
         if (enemy.game_data.damaged_by_current_attack || this.game_is_over) {
             return;
         }
-
-        if (typeof this.user_defined_callbacks.event.enemy_gets_attacked !== 'undefined') {
-            for (let callback of this.user_defined_callbacks.event.enemy_gets_attacked) {
-                callback(this.game, enemy, attack);
-            }
+        
+        for (let callback of this.user_defined_callbacks.event.enemy_gets_attacked) {
+            callback(this.game, enemy, attack);
         }
 
     }

@@ -206,6 +206,9 @@ export class Enemy extends Physics.Arcade.Sprite {
     }
 
     set health(value) {
+        if (value < 0 || value > this.game_data.max_health) {
+            return;
+        }
         this.game_data.current_health = value;
     }
 
@@ -248,9 +251,13 @@ export class Enemy extends Physics.Arcade.Sprite {
     }
 
     update_health_bar(new_value) {
+        let percentage = new_value/this.game_data.max_health;
+        if (percentage < 0 || percentage > 100) {
+            return;
+        }
         this.scene.setEnemyHealthBarValue(
             this.game_data.health_bar,
-            new_value/this.game_data.max_health
+            percentage
         );
     }
 
