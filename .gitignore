@@ -1,5 +1,5 @@
-public/**/*.ttf
-public/**/*.min.js
+#public/**/*.ttf
+#public/**/*.min.js
 node_modules
 **/.DS_Store
 lessons
