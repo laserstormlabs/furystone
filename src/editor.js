@@ -23,15 +23,8 @@ const editor = new EditorView({
 const load_code_button = document.getElementById("load-code");
 
 load_code_button.addEventListener("click", async function() {
-
-  let filename = prompt("Password?");
-
-  if (filename === "" || filename === null) {
-    return;
-  }
-
   try {
-    let response = await fetch("./templates/" + filename + ".js");
+    let response = await fetch("./templates/_latest.js");
     if (response.status === 200) {
 
       let template_code = await response.text();
