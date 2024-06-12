@@ -24,7 +24,7 @@ const load_code_button = document.getElementById("load-code");
 
 load_code_button.addEventListener("click", async function() {
   try {
-    let response = await fetch("./templates/_latest.js");
+    let response = await fetch("./templates/latest.js");
     if (response.status === 200) {
 
       let template_code = await response.text();
