@@ -1,0 +1,104 @@
+body {
+    background-color: #222;
+}
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-family: "Monogram", monospace;
+}
+main p {
+    font-size: 1.5rem;
+    color: #FFF;
+    line-height: 1.7rem;
+    text-align: center;
+}
+main p a {
+    color: #c5b6f2;
+    border-bottom: 2px solid;
+    text-decoration: none;
+    cursor: pointer;
+}
+video {
+    border: 3px solid #5624ed;
+}
+div.links {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+div.links a {
+    font-family: "Monogram", monospace;
+    color: #5624ed;
+    padding: 1rem 2rem;
+    margin-left: 1rem;
+    background-color: #EEE;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: -2px 2px 0 #5624ed;
+    transition: transform .2s;
+    text-decoration: none;
+}
+div.links a:first-child {
+    margin: 0;
+}
+div.links a:active {
+    box-shadow: none;
+    transform: translate(-2px, 2px);
+}
+::backdrop {
+    background-color: #000;
+    opacity: .7;
+}
+#game-asset-list {
+    padding: 0.5rem;
+}
+#game-asset-list-close {
+    float: right;
+    border: none;
+    background-color: transparent;
+    color: #5624ed;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+#game-asset-list ul {
+    list-style-type: none;
+    margin: 0;
+    font-family: "Monogram", monospace;
+    font-size: 1.5rem;
+    padding: 2rem;
+}
+#game-asset-list ul li { 
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+#game-asset-list ul li a {
+    color: #5624ed;
+    border-bottom: 2px solid;
+    text-decoration: none; 
+}
+#game-asset-list ul li img {
+    margin-right: 2rem;
+    width: 40px;
+}
+#game-asset-list ul li span {
+    margin-right: 2rem;
+    background-color: #5624ed;
+    color: #FFF;
+    box-shadow: 2px 2px 0 #1d2b53;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
