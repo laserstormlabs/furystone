@@ -47,6 +47,20 @@ load_code_button.addEventListener("click", async function() {
   }
 })
 
+const viewer_container = document.getElementById("viewer-container");
+const hide_viewer_button = document.getElementById("toggle-hide-viewer");
+const hide_viewer_wording = document.getElementById("toggle-hide-viewer-wording");
+
+hide_viewer_button.addEventListener("click", function() {
+  if (viewer_container.classList.contains("hidden")) {
+    viewer_container.classList.remove("hidden");
+    hide_viewer_wording.innerText = "Hide";
+  } else {
+    viewer_container.classList.add("hidden");
+    hide_viewer_wording.innerText = "Show";
+  }
+});
+
 const viewer_iframe = document.getElementById("viewer");
 
 let reload_listener_set = false;
