@@ -61,6 +61,9 @@ button#run:hover {
     align-items: center;
     justify-content: flex-end;
 }
+#header-buttons-container button, #header-buttons-container select {
+    margin-left: 1rem;
+}
 #header-buttons-container button {
     font-family: "Monogram", monospace;
     color: #5624ed;

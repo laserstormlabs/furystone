@@ -21,26 +21,44 @@ const editor = new EditorView({
 });
 
 const load_code_button = document.getElementById("load-code");
+const load_code_options = document.getElementById("load-code-options");
+const load_code_timestamp_optgroup = document.getElementById("load-code-timestamps");
 
 load_code_button.addEventListener("click", async function() {
   try {
-    let response = await fetch("./templates/latest.js");
-    if (response.status === 200) {
+    if (load_code_options.value == "template") {
+      let response = await fetch("./templates/_latest.js");
+      if (response.status === 200) {
 
-      let template_code = await response.text();
+        let template_code = await response.text();
 
-      editor.dispatch({
-        changes: {
-          from: 0,
-          to: editor.state.doc.length,
-          insert: template_code
-        }
-      });
+        editor.dispatch({
+          changes: {
+            from: 0,
+            to: editor.state.doc.length,
+            insert: template_code
+          }
+        });
 
-      saveEditorContent();
-      
+        saveEditorContent();
+        
+      } else {
+        alert("Could not load code from last week.");
+      }
     } else {
-      alert("Wrong password!");
+      for (let backup of editor_content_backups) {
+        if (backup.timestamp == load_code_options.value) {
+          editor.dispatch({
+            changes: {
+              from: 0,
+              to: editor.state.doc.length,
+              insert: backup.content
+            }
+          });
+          saveEditorContent();
+          break;
+        }
+      }
     }
   } catch (error) {
     alert("Something went wrong!");
@@ -65,8 +83,43 @@ const viewer_iframe = document.getElementById("viewer");
 
 let reload_listener_set = false;
 
+let last_editor_content_snapshot = null;
+
+function addLoadCodeTimestampOption(timestamp) {
+  let load_code_option = document.createElement("option");
+  load_code_option.setAttribute("value", timestamp);
+  load_code_option.innerText = timestamp;
+  load_code_timestamp_optgroup.prepend(load_code_option);
+}
+
 function saveEditorContent() {
-  localStorage.setItem("editor_content", editor.state.doc.toString());
+  let current_editor_content = editor.state.doc.toString();
+  let now = new Date();
+  let now_timestamp = now.getTime();
+  if (now_timestamp - last_editor_content_snapshot >= 60000) {
+    if (editor_content_backups.length >= 5) {
+      editor_content_backups.pop();
+      load_code_timestamp_optgroup.lastChild.remove();
+    }
+  
+    let formatted_minutes = now.getMinutes().toString();
+    if (formatted_minutes.length < 2) {
+      formatted_minutes = "0".concat(formatted_minutes);
+    }
+
+    let formatted_timestamp = now.getHours() + ':' + formatted_minutes;// + ':' + now.getSeconds();
+    editor_content_backups.unshift({
+      content: current_editor_content,
+      timestamp: formatted_timestamp
+    });
+
+    addLoadCodeTimestampOption(formatted_timestamp);
+
+    last_editor_content_snapshot = now;
+
+    localStorage.setItem("editor_content_backups", JSON.stringify(editor_content_backups));
+  }
+  localStorage.setItem("editor_content", current_editor_content);
 }
 
 function runUserCode() {
@@ -116,15 +169,30 @@ editor.contentDOM.addEventListener("keyup", function() {
   editor_keyup_timeout = setTimeout(saveEditorContent, 500);
 });
 
-let saved_editor_content = localStorage.getItem("editor_content");
+let stored_editor_content_backups = localStorage.getItem("editor_content_backups");
+let latest_editor_content = localStorage.getItem("editor_content");
+let editor_content_backups = [];
 
-if (saved_editor_content !== null && saved_editor_content !== "") {
+if (stored_editor_content_backups !== null && stored_editor_content_backups !== "") {
+
+  try {
+    editor_content_backups = JSON.parse(stored_editor_content_backups);
+    for (let backup of editor_content_backups.reverse()) {
+      addLoadCodeTimestampOption(backup.timestamp);
+    }
+  } catch (e) {
+    editor_content_backups = [];
+  }
+
+}
+
+if (latest_editor_content !== null && latest_editor_content !== "") {
 
   editor.dispatch({
     changes: {
       from: 0,
       to: editor.state.doc.length,
-      insert: saved_editor_content
+      insert: latest_editor_content
     }
   });
 
@@ -133,11 +201,6 @@ if (saved_editor_content !== null && saved_editor_content !== "") {
   setTimeout(() => {
     editor.scrollDOM.scrollTop = 0;
   }, 100);
-  
-
-} else {
-
-  //document.getElementById("click-run").classList.remove("hidden");
 
 }
 

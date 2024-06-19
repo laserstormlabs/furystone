@@ -32,9 +32,16 @@
                 <button id="show-maps">
                     Maps
                 </button>
-                <button id="load-code">
-                    Load Code
-                </button>
+                <div id="load-code-container">
+                    <span class="for-hackers">
+                        Load Code From...
+                    </span>
+                    <select id="load-code-options">
+                        <optgroup id="load-code-timestamps" label="Auto saves"></optgroup>
+                        <option value="template">Last Week</option>
+                    </select>
+                    <button id="load-code">Load</button>
+                </div>
             </div>
         </header>
         <main>
