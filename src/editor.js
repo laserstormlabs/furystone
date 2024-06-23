@@ -107,7 +107,7 @@ function saveEditorContent() {
       formatted_minutes = "0".concat(formatted_minutes);
     }
 
-    let formatted_timestamp = now.getHours() + ':' + formatted_minutes;// + ':' + now.getSeconds();
+    let formatted_timestamp = now.getHours() + ':' + formatted_minutes;
     editor_content_backups.unshift({
       content: current_editor_content,
       timestamp: formatted_timestamp
