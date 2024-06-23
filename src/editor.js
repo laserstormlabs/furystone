@@ -20,50 +20,34 @@ const editor = new EditorView({
   dark: true
 });
 
-const load_code_button = document.getElementById("load-code");
 const load_code_options = document.getElementById("load-code-options");
-const load_code_timestamp_optgroup = document.getElementById("load-code-timestamps");
+const load_code_last_week_button = document.getElementById("load-code-last-week");
+const load_code_dialog = document.getElementById("load-code-dialog");
 
-load_code_button.addEventListener("click", async function() {
+load_code_last_week_button.addEventListener("click", async function() {
   try {
-    if (load_code_options.value == "template") {
-      let response = await fetch("./templates/latest.js");
-      if (response.status === 200) {
+    let response = await fetch("./templates/latest.js");
+    if (response.status === 200) {
 
-        let template_code = await response.text();
+      let template_code = await response.text();
 
-        editor.dispatch({
-          changes: {
-            from: 0,
-            to: editor.state.doc.length,
-            insert: template_code
-          }
-        });
-
-        saveEditorContent();
-        
-      } else {
-        alert("Could not load code from last week.");
-      }
-    } else {
-      for (let backup of editor_content_backups) {
-        if (backup.timestamp == load_code_options.value) {
-          editor.dispatch({
-            changes: {
-              from: 0,
-              to: editor.state.doc.length,
-              insert: backup.content
-            }
-          });
-          saveEditorContent();
-          break;
+      editor.dispatch({
+        changes: {
+          from: 0,
+          to: editor.state.doc.length,
+          insert: template_code
         }
-      }
+      });
+
+      load_code_dialog.close();
+      
+    } else {
+      alert("Could not load code from last week.");
     }
   } catch (error) {
     alert("Something went wrong!");
   }
-})
+});
 
 const viewer_container = document.getElementById("viewer-container");
 const hide_viewer_button = document.getElementById("toggle-hide-viewer");
@@ -86,10 +70,30 @@ let reload_listener_set = false;
 let last_editor_content_snapshot = null;
 
 function addLoadCodeTimestampOption(timestamp) {
-  let load_code_option = document.createElement("option");
-  load_code_option.setAttribute("value", timestamp);
-  load_code_option.innerText = timestamp;
-  load_code_timestamp_optgroup.prepend(load_code_option);
+
+  let load_code_button = document.createElement("button");
+  load_code_button.classList.add("load-code-option");
+  load_code_button.setAttribute("data-timestamp", timestamp);
+  load_code_button.innerText = timestamp;
+  load_code_options.prepend(load_code_button);
+
+  load_code_button.addEventListener("click", function() {
+
+    for (let backup of editor_content_backups) {
+      if (backup.timestamp == load_code_button.dataset.timestamp) {
+        editor.dispatch({
+          changes: {
+            from: 0,
+            to: editor.state.doc.length,
+            insert: backup.content
+          }
+        });
+        load_code_dialog.close();
+        break;
+      }
+    }
+
+  });
 }
 
 function saveEditorContent() {
@@ -99,7 +103,7 @@ function saveEditorContent() {
   if (now_timestamp - last_editor_content_snapshot >= 60000) {
     if (editor_content_backups.length >= 5) {
       editor_content_backups.pop();
-      load_code_timestamp_optgroup.lastChild.remove();
+      document.querySelector(".load-code-option:nth-child(5)").remove();
     }
   
     let formatted_minutes = now.getMinutes().toString();
@@ -177,7 +181,8 @@ if (stored_editor_content_backups !== null && stored_editor_content_backups !== 
 
   try {
     editor_content_backups = JSON.parse(stored_editor_content_backups);
-    for (let backup of editor_content_backups.reverse()) {
+    for (let i = editor_content_backups.length - 1; i >= 0; i--) {
+      let backup = editor_content_backups[i];
       addLoadCodeTimestampOption(backup.timestamp);
     }
   } catch (e) {

@@ -32,15 +32,7 @@
                 <button id="show-maps">
                     Maps
                 </button>
-                <div id="load-code-container">
-                    <span class="for-hackers">
-                        Load Code From...
-                    </span>
-                    <select id="load-code-options">
-                        <optgroup id="load-code-timestamps" label="Auto saves"></optgroup>
-                        <option value="template">Last Week</option>
-                    </select>
-                    <button id="load-code">Load</button>
+                <button id="load-code">Load Code</button>
                 </div>
             </div>
         </header>
@@ -135,6 +127,12 @@
                 </li>
             </ul>
         </dialog>
+        <dialog id="load-code-dialog" class="builder-options-dialog">
+            <button id="load-code-dialog-close" class="builder-options-dialog-close">&#10005;</button>
+            <div id="load-code-options" class="builder-options-grid">
+                <button id="load-code-last-week" class="load-code-option">Last Week</button>
+            </div>
+        </dialog>
         <script src="./editor.min.js"></script>
         <script type="text/javascript">
             var maps_dialog = document.getElementById("maps-dialog");
@@ -143,6 +141,9 @@
             var enemies_dialog = document.getElementById("enemies-dialog");
             var enemies_dialog_open = document.getElementById("show-enemies");
             var enemies_dialog_close = document.getElementById("enemies-dialog-close");
+            var load_code_dialog = document.getElementById("load-code-dialog");
+            var load_code_dialog_open = document.getElementById("load-code");
+            var load_code_dialog_close = document.getElementById("load-code-dialog-close");
             
             maps_dialog_open.addEventListener("click", function() {
                 maps_dialog.showModal();
@@ -158,6 +159,14 @@
 
             enemies_dialog_close.addEventListener("click", function() {
                 enemies_dialog.close();
+            });
+
+            load_code_dialog_open.addEventListener("click", function() {
+                load_code_dialog.showModal();
+            });
+
+            load_code_dialog_close.addEventListener("click", function() {
+                load_code_dialog.close();
             });
         </script>
     </body>

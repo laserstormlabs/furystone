@@ -100,7 +100,6 @@ export class Game extends PhaserGame {
     }
 
     destroy_stone(stone) {
-        console.log("Game destroy stone")
         const gameScene = this.scene.getScene("GameScene");
         gameScene.destroyTarget(stone);
     }

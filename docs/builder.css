@@ -64,7 +64,7 @@ button#run:hover {
 #header-buttons-container button, #header-buttons-container select {
     margin-left: 1rem;
 }
-#header-buttons-container button {
+#header-buttons-container button, .load-code-option {
     font-family: "Monogram", monospace;
     color: #5624ed;
     padding: .2rem .4rem;
@@ -78,14 +78,22 @@ button#run:hover {
     box-shadow: -2px 2px 0 #5624ed;
     transition: transform .2s;
 }
-#header-buttons-container button:active {
-    box-shadow: none;
-    transform: translate(-2px, 2px);
+#load-code-dialog {
+    background-color: #222;
 }
-#header-buttons-container button#load-code {
+#load-code-options {
+    grid-gap: 1rem;
+    padding: 2rem;  
+}
+.load-code-option {
+    font-size: 1.8rem;
     color: #EEE;
     background-color: #5624ed;
     box-shadow: -2px 2px 0 #c5b6f2;
+}
+#header-buttons-container button:active {
+    box-shadow: none;
+    transform: translate(-2px, 2px);
 }
 #header-buttons-container button#load-code:active {
     box-shadow: none;

@@ -1,7 +1,7 @@
 var builder = new GameBuilder()
-builder.set_map("skull")
-builder.set_starting_point(400, 200)
-builder.add_enemy("ogre", 200, 100)
+builder.set_map("rectangle")
+builder.set_starting_point(100, 75)
+builder.add_enemy("chomper_small", 150, 300)
 
 function light_attack(game) {
   var player = game.player
