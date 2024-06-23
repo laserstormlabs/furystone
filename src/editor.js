@@ -27,7 +27,7 @@ const load_code_timestamp_optgroup = document.getElementById("load-code-timestam
 load_code_button.addEventListener("click", async function() {
   try {
     if (load_code_options.value == "template") {
-      let response = await fetch("./templates/_latest.js");
+      let response = await fetch("./templates/latest.js");
       if (response.status === 200) {
 
         let template_code = await response.text();
