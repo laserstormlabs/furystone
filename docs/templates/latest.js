@@ -28,7 +28,37 @@ function player_gets_attacked(game, enemy) {
   player.health = new_health
   game.update_health_bar(player.health)
   player.show_effect("damage")
+  if (player.health == 0) {
+    var lines = [
+      "The monsters have beaten you.",
+      "Press ENTER to try again."
+    ]
+    game.lose(lines)
+  }
 }
 builder.handle_event("player_gets_attacked", player_gets_attacked)
+
+function player_attack_ends(game) {
+  for (var enemy of game.enemies) {
+    if (enemy.health == 0) {
+      enemy.die()
+    }
+  }
+}
+builder.handle_event("player_attack_ends", player_attack_ends)
+
+builder.add_fury_stone("green", 450, 250)
+
+function player_hits_stone(game, stone) {
+  game.destroy_stone(stone)
+  if (game.fury_stones.length == 0) {
+    var lines = [
+      "You have done well.",
+      "Press ENTER to play again."
+    ]
+    game.win(lines)
+  }
+}
+builder.handle_event("player_hits_stone", player_hits_stone)
 
 builder.start_game()
