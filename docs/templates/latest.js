@@ -61,4 +61,27 @@ function player_hits_stone(game, stone) {
 }
 builder.handle_event("player_hits_stone", player_hits_stone)
 
+builder.add_potion("blue", 100, 150)
+builder.add_potion("green", 200, 150)
+
+function player_collects_potion(game, potion) {
+  var player = game.player
+  if (potion.color == "blue") {
+    potion.destroy()
+    player.magic = player.magic + 10
+    game.update_magic_bar(player.magic)
+  }
+  if (potion.color == "green") {
+    potion.destroy()
+    player.speed = player.speed * 2
+
+    function back_to_normal_speed() {
+      player.speed = player.speed / 2
+    }
+
+    setTimeout(back_to_normal_speed, 5000)
+  }
+}
+builder.handle_event("player_touches_potion", player_collects_potion)
+
 builder.start_game()
