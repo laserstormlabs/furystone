@@ -206,8 +206,11 @@ export class Enemy extends Physics.Arcade.Sprite {
     }
 
     set health(value) {
-        if (value < 0 || value > this.game_data.max_health) {
-            return;
+        if (value < 0) {
+            value = 0;
+        }
+        if (value > this.game_data.max_health) {
+            value = this.game_data.max_health;
         }
         this.game_data.current_health = value;
     }

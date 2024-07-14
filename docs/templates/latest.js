@@ -63,6 +63,8 @@ builder.handle_event("player_hits_stone", player_hits_stone)
 
 builder.add_potion("blue", 100, 150)
 builder.add_potion("green", 200, 150)
+builder.add_potion("red", 150, 150)
+builder.add_potion("silver", 250, 150)
 
 function player_collects_potion(game, potion) {
   var player = game.player
@@ -70,6 +72,11 @@ function player_collects_potion(game, potion) {
     potion.destroy()
     player.magic = player.magic + 10
     game.update_magic_bar(player.magic)
+  }
+  if (potion.color == "red") {
+    potion.destroy()
+    player.health = player.health + 10
+    game.update_health_bar(player.health)
   }
   if (potion.color == "green") {
     potion.destroy()
@@ -80,6 +87,20 @@ function player_collects_potion(game, potion) {
     }
 
     setTimeout(back_to_normal_speed, 5000)
+  }
+  if (potion.color == "silver") {
+    potion.destroy()
+    player.alpha = 0.5
+    for (var enemy of game.enemies) {
+      enemy.can_see_player = false
+    }
+    function visible_again() {
+      player.alpha = 1
+      for (var enemy of game.enemies) {
+        enemy.can_see_player = true
+      }
+    }
+    setTimeout(visible_again, 5000)
   }
 }
 builder.handle_event("player_touches_potion", player_collects_potion)
