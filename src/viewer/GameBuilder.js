@@ -63,6 +63,41 @@ export class GameBuilder {
         this.level_data.starting_point = { x, y };
     }
 
+    set_time_limit(seconds) {
+
+        function game_start(game) {
+            var timer_x = game.width - 50
+            var timer_y = 10
+            var seconds_remaining = seconds
+            game.set_data("seconds_remaining", seconds_remaining)
+            game.add_text("timer", timer_x, timer_y, seconds_remaining, 32)
+        }
+        
+        this.handle_event("game_start", game_start);
+        
+        function update_timer(game) {
+            var seconds_remaining = game.get_data("seconds_remaining")
+            seconds_remaining -= 1
+            game.set_data("seconds_remaining", seconds_remaining)
+            game.update_text("timer", seconds_remaining)
+            if (seconds_remaining < 10) {
+                game.update_text_color("timer", "red")
+            }
+            if (seconds_remaining === 0) {
+                var player = game.player
+                player.health = 0
+                game.update_health_bar(0)
+                game.lose([
+                    "You are out of time.",
+                    "( Press 'ENTER' to try again )"
+                ])
+            }
+        }
+        
+        this.set_interval(update_timer, 1000);
+        
+    }
+
     set_interval(callback, ms) {
         if (typeof this.callbacks.interval[ms] === 'undefined') {
             this.callbacks.interval[ms] = [];
@@ -105,10 +140,6 @@ export class GameBuilder {
             color: color,
             position: { x, y }
         });
-    }
-
-    set_time_limit(seconds) {
-        this.level_data.time_allowed = seconds;
     }
 
     handle_event(event_name, callback) {
